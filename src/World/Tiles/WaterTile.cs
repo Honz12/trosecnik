@@ -2,24 +2,14 @@ namespace trosecnik.src.World.Tiles
 {
     public class WaterTile : ITile
     {
-        byte anim = 0;
-        byte timer = 0;
-
-        public uint GetTextureId()
+        public uint GetTextureId(ulong tick)
         {
-            return 2u + anim;
+            return 2u + (uint) (tick / 30 % 8);
         }
 
         public bool GetWalkable()
         {
             return false;
-        }
-
-        public void UpdateRenderState()
-        {
-            timer++;
-            if (timer % 15 != 0) return;
-            anim = (byte) ((anim + 1) % 8);
         }
     }
 }

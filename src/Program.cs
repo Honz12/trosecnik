@@ -1,21 +1,46 @@
 ﻿using Raylib_cs;
-using trosecnik.src.World;
 
 namespace trosecnik.src
 {
     public static class Program
     {
+        public const int BASE_TILE_SIZE = 16;
+
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
         public const string VER_STRING = "0.1";
 
         public static int ScreenWidth = 640;
         public static int ScreenHeight = 360;
+        public static int ScreenTilesHor = ScreenWidth / BASE_TILE_SIZE;
+        public static int ScreenTilesVer = ScreenHeight / BASE_TILE_SIZE;
+        public static int ScreenCenterX = ScreenWidth / 2;
+        public static int ScreenCenterY = ScreenHeight / 2;
+        public static int GameGraphicsScale = 1;
 
-        public static World.World world = new(512, 512);
+        public static World.World world = new(512, 512, 0);
+        public static Player player = new()
+        {
+            X = world.Width / 2,
+            Y = world.Height / 2,
+        };
+
+        public static ulong Tick;
+        private static int debugMenuEntries = 0;
+        private static bool miniTiles = false;
+
+        public static void AddDebugMenuEntry(string entry)
+        {
+            int fontSize = 10 * GameGraphicsScale;
+            int padding = 2 * GameGraphicsScale;
+            Raylib.DrawText(entry, padding, padding + (padding + fontSize) * debugMenuEntries, fontSize, Color.Magenta);
+            debugMenuEntries++;
+        }
 
         public static void Main()
         {
+            Raylib.SetConfigFlags(ConfigFlags.VSyncHint);
+
             Raylib.InitWindow(ScreenWidth, ScreenHeight, $"Trosečník {VER_STRING}");
 
             Raylib.SetExitKey(KeyboardKey.Null);
@@ -27,25 +52,59 @@ namespace trosecnik.src
                 ScreenWidth = Raylib.GetScreenWidth();
                 ScreenHeight = Raylib.GetScreenHeight();
 
-                int tileScale = Math.Min(ScreenWidth / 640, ScreenHeight / 360);
-                world.TileSize = tileScale * 16;
+                GameGraphicsScale = Math.Min(ScreenWidth / 640, ScreenHeight / 360);
+                world.TileSize = miniTiles ? 1 : (GameGraphicsScale * BASE_TILE_SIZE);
 
-                // --- UPDATE LOGIC HERE ---
-                // Example: Handle input or move objects
+                ScreenTilesHor = ScreenWidth / world.TileSize;
+                ScreenTilesVer = ScreenHeight / world.TileSize;
+
+                ScreenCenterX = ScreenWidth / 2;
+                ScreenCenterY = ScreenHeight / 2;
+
+                // --- UPDATE LOGIC ---
 
                 if (Raylib.IsKeyPressed(KeyboardKey.F11))
                 {
                     Raylib.ToggleFullscreen();
                 }
 
+                if (Raylib.IsKeyPressed(KeyboardKey.F1))
+                {
+                    player.Flying = !player.Flying;
+                }
+
+                if (Raylib.IsKeyPressed(KeyboardKey.F2))
+                {
+                    miniTiles = !miniTiles;
+                }
+
+                player.Update();
+
                 // --- DRAW LOGIC HERE ---
+                debugMenuEntries = 0;
+
                 Raylib.BeginDrawing();
                 
                 Raylib.ClearBackground(Color.Black);
 
-                world.Draw();
+                world.Draw(player.X, player.Y, Tick);
+
+                player.Draw(world.TileSize);
+
+                AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
+
+                string flyingString = player.Flying ? " [F]" : "";
+                string mtString = miniTiles ? " [MT]" : "";
+
+                AddDebugMenuEntry($"<PLAYER> X:{player.X} Y:{player.Y}{flyingString}");
+                AddDebugMenuEntry($"<WORLD> W:{world.Width} H:{world.Height}");
+                AddDebugMenuEntry($"<VIEWPORT> TW:{ScreenTilesHor} TH:{ScreenTilesVer}{mtString}");
+                AddDebugMenuEntry($"<SCREEN> W:{ScreenWidth} H:{ScreenHeight} GGS:{GameGraphicsScale}");
+                AddDebugMenuEntry($"<TILE> S-PX:{world.TileSize}");
 
                 Raylib.EndDrawing();
+
+                Tick++;
             }
 
             Raylib.CloseWindow();
