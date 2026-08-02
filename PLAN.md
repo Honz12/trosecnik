@@ -56,8 +56,8 @@ Hráč musí hlídat tři ukazatele:
 ## 4. Plánované funkce (checklist)
 
 ### Fáze 1 – Základ hry
-- [ ] Nastavení projektu s Raylib-cs
-- [ ] Vykreslení ostrova jako tile-map
+- [x] Nastavení projektu s Raylib-cs
+- [x] Vykreslení ostrova jako tile-map
 - [ ] Pohyb hráče
 - [ ] HUD s ukazateli (voda, hlad, zdraví)
 
