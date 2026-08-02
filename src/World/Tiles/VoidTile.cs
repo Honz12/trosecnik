@@ -11,5 +11,10 @@ namespace trosecnik.src.World.Tiles
         {
             return true;
         }
+
+        public void UpdateRenderState()
+        {
+            return;
+        }
     }
 }

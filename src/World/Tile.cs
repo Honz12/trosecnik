@@ -4,5 +4,6 @@ namespace trosecnik.src.World
     {
         public uint GetTextureId();
         public bool GetWalkable();
+        public void UpdateRenderState();
     }
 }

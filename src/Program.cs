@@ -12,7 +12,7 @@ namespace trosecnik.src
         public static int ScreenWidth = 640;
         public static int ScreenHeight = 360;
 
-        public static World.World world = new(8, 8);
+        public static World.World world = new(ScreenWidth / 16, ScreenHeight / 16);
 
         public static void Main()
         {
@@ -24,6 +24,11 @@ namespace trosecnik.src
             {
                 // --- UPDATE LOGIC HERE ---
                 // Example: Handle input or move objects
+                
+                if (Raylib.IsKeyPressed(KeyboardKey.F11))
+                {
+                    Raylib.ToggleFullscreen();
+                }
 
                 // --- DRAW LOGIC HERE ---
                 Raylib.BeginDrawing();

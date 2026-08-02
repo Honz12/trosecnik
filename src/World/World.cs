@@ -63,27 +63,28 @@ namespace trosecnik.src.World
             Width = width;
             Height = height;
 
-            tiles = new Tiles.VoidTile[width, height];
+            tiles = new ITile[width, height];
 
             for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < Width; y++)
+                for (int y = 0; y < Height; y++)
                 {
-                    tiles[x, y] = new Tiles.VoidTile();
+                    tiles[x, y] = new Tiles.WaterTile();
                 }
             }
         }
 
         public void Draw()
         {
-            // Draw all the tiles with the `assets/tile_{id:0>4}.png` (python formating) filename
-
             for(int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    string tileId = $"tiles/tile_{tiles[x, y].GetTextureId():D4}";
-                    Vector2 position = new Vector2(x * TileSize, y * TileSize);
+                    ITile tile = tiles[x, y];
+                    tile.UpdateRenderState();
+
+                    string tileId = $"tiles/tile_{tile.GetTextureId():D4}";
+                    Vector2 position = new(x * TileSize, y * TileSize);
 
                     TileRenderer.DrawTile(tileId, position);
                 }
