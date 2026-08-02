@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="assets\**" Exclude="assets\**\*.pxo">
+    <None Include="assets\**" Exclude="assets\**\*.pxo">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
