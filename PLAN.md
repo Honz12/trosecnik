@@ -58,8 +58,8 @@ Hráč musí hlídat tři ukazatele:
 ### Fáze 1 – Základ hry
 - [x] Nastavení projektu s Raylib-cs
 - [x] Vykreslení ostrova jako tile-map
-- [ ] Pohyb hráče
-- [ ] HUD s ukazateli (voda, hlad, zdraví)
+- [x] Pohyb hráče
+- [x] HUD s ukazateli (voda, hlad, zdraví)
 
 ### Fáze 2 – Přežití
 - [ ] Ztráta hladu / vody / zdraví v čase
