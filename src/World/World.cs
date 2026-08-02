@@ -77,13 +77,24 @@ namespace trosecnik.src.World
             FastNoiseLite heightNoise = new(seed);
 
             heightNoise.SetNoiseType(FastNoiseLite.NoiseType.Value);
-            heightNoise.SetNoiseType(FastNoiseLite.NoiseType.Value);
             heightNoise.SetFrequency(0.03f);
             heightNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
             heightNoise.SetFractalOctaves(4);
             heightNoise.SetFractalLacunarity(2f);
             heightNoise.SetFractalGain(0.5f);
             heightNoise.SetFractalWeightedStrength(0f);
+
+            /*
+            FastNoiseLite riverNoise = new(seed);
+
+            riverNoise.SetNoiseType(FastNoiseLite.NoiseType.ValueCubic);
+            riverNoise.SetFrequency(0.2f);
+            riverNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
+            riverNoise.SetFractalOctaves(2);
+            riverNoise.SetFractalLacunarity(2f);
+            riverNoise.SetFractalGain(0.5f);
+            riverNoise.SetFractalWeightedStrength(0f);
+            */
 
             for (int x = 0; x < Width; x++)
             {
@@ -94,9 +105,17 @@ namespace trosecnik.src.World
                     {
                         tiles[x, y] = new Tiles.GrassTile();
                     }
-                    else
+                    else if (height > 0)
+                    {
+                        tiles[x, y] = new Tiles.SandTile();
+                    }
+                    else if (height > -0.5)
                     {
                         tiles[x, y] = new Tiles.WaterTile();
+                    }
+                    else
+                    {
+                        tiles[x, y] = new Tiles.DeepWaterTile();
                     }
                 }
             }
