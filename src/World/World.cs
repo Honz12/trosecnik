@@ -43,10 +43,21 @@ namespace trosecnik.src.World
 
     public class TileRenderer
     {
-        public static void DrawTile(string tileId, Vector2 position)
+        public static void DrawTile(string tileId, Vector2 position, int tileSize)
         {
             Texture2D texture = TextureManager.GetTexture(tileId);
-            Raylib.DrawTextureV(texture, position, Color.White);
+
+            // Entire source image
+            Rectangle sourceRec = new Rectangle(0, 0, texture.Width, texture.Height);
+
+            // Destination rectangle on screen (Position + Size)
+            Rectangle destRec = new Rectangle(position.X, position.Y, tileSize, tileSize);
+
+            // Origin for rotation (top-left is 0,0)
+            Vector2 origin = Vector2.Zero;
+
+            // Draw with scaling
+            Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, Color.White);
         }
     }
 
@@ -86,7 +97,7 @@ namespace trosecnik.src.World
                     string tileId = $"tiles/tile_{tile.GetTextureId():D4}";
                     Vector2 position = new(x * TileSize, y * TileSize);
 
-                    TileRenderer.DrawTile(tileId, position);
+                    TileRenderer.DrawTile(tileId, position, TileSize);
                 }
             }
         }

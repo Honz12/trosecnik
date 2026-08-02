@@ -12,19 +12,27 @@ namespace trosecnik.src
         public static int ScreenWidth = 640;
         public static int ScreenHeight = 360;
 
-        public static World.World world = new(ScreenWidth / 16, ScreenHeight / 16);
+        public static World.World world = new(512, 512);
 
         public static void Main()
         {
             Raylib.InitWindow(ScreenWidth, ScreenHeight, $"Trosečník {VER_STRING}");
 
+            Raylib.SetExitKey(KeyboardKey.Null);
+
             Raylib.SetTargetFPS(60);
 
             while (!Raylib.WindowShouldClose())
             {
+                ScreenWidth = Raylib.GetScreenWidth();
+                ScreenHeight = Raylib.GetScreenHeight();
+
+                int tileScale = Math.Min(ScreenWidth / 640, ScreenHeight / 360);
+                world.TileSize = tileScale * 16;
+
                 // --- UPDATE LOGIC HERE ---
                 // Example: Handle input or move objects
-                
+
                 if (Raylib.IsKeyPressed(KeyboardKey.F11))
                 {
                     Raylib.ToggleFullscreen();
