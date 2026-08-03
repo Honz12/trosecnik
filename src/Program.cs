@@ -73,7 +73,17 @@ namespace trosecnik.src
 
             Raylib.SetTargetFPS(60);
 
-            font = Raylib.LoadFont("assets/PXPLUS_IBM_VGA8.TTF");
+            // Special characters
+            string specialChars = "áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ";
+
+            // Create an array containing ASCII (32-126) + Czech characters
+            int[] codepoints = Enumerable.Range(32, 95)
+                .Concat(specialChars.Select(c => (int)c))
+                .Distinct()
+                .ToArray();
+
+            // Raylib-cs accepts the array directly
+            font = Raylib.LoadFontEx("assets/PXPLUS_IBM_VGA8.TTF", 32, codepoints, codepoints.Length);
 
             while (!Raylib.WindowShouldClose() && !ShouldExit)
             {

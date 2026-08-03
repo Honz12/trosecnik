@@ -18,6 +18,12 @@ namespace trosecnik.src.WorldSpace.Entities
                 pathfinder = new(world);
                 pathfinder.SetStart((int) Position.X, (int) Position.Y);
                 pathfinder.SetTarget(player.X, player.Y);
+                if (new Vector2(Position.X - player.X, Position.Y - player.Y).LengthSquared() < 100)
+                {
+                    pathfinder.SetStart((int) Position.X, (int) Position.Y);
+                    pathfinder.SetTarget(player.X, player.Y);
+                    pathfinder.Recalculate();
+                }
             }
 
             if (tick % 20 == 0)
