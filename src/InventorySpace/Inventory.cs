@@ -34,6 +34,11 @@ namespace trosecnik.src.InventorySpace
             return true;
         }
 
+        public void DeleteItem(int idx)
+        {
+            Items.RemoveAt(idx);
+        }
+
         public void Draw()
         {
             Texture2D slot = TextureManager.GetTexture("ui/inv_slot_0001.png");
@@ -122,9 +127,17 @@ namespace trosecnik.src.InventorySpace
                     );
                 }
             }
+
+            if (Selected < Items.Count)
+            {
+                IItem item = Items[Selected];
+                
+                int fontSize = Program.DEFAULT_FONT_SIZE * Program.GameGraphicsScale;
+                Program.DrawCustomText(item.GetDisplayName(), menuOriginX, menuOriginY - fontSize - Program.GameGraphicsScale, fontSize, Color.Black);
+            }
         }
 
-        public void Update()
+        public void Update(Player player)
         {
             float scroll = Raylib.GetMouseWheelMove();
 
@@ -139,6 +152,23 @@ namespace trosecnik.src.InventorySpace
 
             Selected += INVENTORY_SIZE;
             Selected %= INVENTORY_SIZE;
+
+            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+            {
+                if (Selected < Items.Count)
+                {
+                    IItem item = Items[Selected];
+                    
+                    switch (item.GetItemType())
+                    {
+                        case IItem.ItemType.Consumable:
+                            item.ConsumeItem(player, Selected);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
     }
 }

@@ -50,7 +50,7 @@ namespace trosecnik.src
 
         public static void AddDebugMenuEntry(string entry)
         {
-            int fontSize = 10 * GameGraphicsScale;
+            int fontSize = DEFAULT_FONT_SIZE * GameGraphicsScale;
             int padding = 2 * GameGraphicsScale;
             for (int ox = -1; ox <= 1; ox++)
             {
@@ -68,9 +68,9 @@ namespace trosecnik.src
             Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow | ConfigFlags.FullscreenMode);
 
             Raylib.InitWindow(ScreenWidth, ScreenHeight, $"{TransalationServer.GetTransalated("gameName")} {VER_STRING}");
-
+            
+            Raylib.SetWindowMinSize(640, 360);
             Raylib.SetExitKey(KeyboardKey.Null);
-
             Raylib.SetTargetFPS(60);
 
             // Special characters
@@ -146,13 +146,15 @@ namespace trosecnik.src
                 if (DebugShown)
                 {
                     AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
+                    AddDebugMenuEntry($"Tick: {Tick}");
+                    AddDebugMenuEntry($"Language: {TransalationServer.GetLanguage().ToUpper()}");
                     string mtString = miniTiles ? " [MT]" : "";
 
                     AddDebugMenuEntry($"Position - X:{player.X} Y:{player.Y}");
                     AddDebugMenuEntry($"Viewport - TilesHorizonzaly:{ScreenTilesHor} TilesVerticaly:{ScreenTilesVer}{mtString} TileSizeInPixels:{world.TileSize}");
                     AddDebugMenuEntry($"Screen - Width:{ScreenWidth} Height:{ScreenHeight} GameGraphicsScale:{GameGraphicsScale}");
                     AddDebugMenuEntry($"Cursor - WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
-                    AddDebugMenuEntry($"Health:{player.Health} Hunger:{player.Hunger} Saturation:{player.Saturation}");
+                    AddDebugMenuEntry($"Health:{player.Health} Hunger:{player.Hunger} Saturation:{player.Saturation:F2} Thirst:{player.Thirst} Thirsting:{player.Thirsting:F2}");
                     AddDebugMenuEntry($"World - Width:{world.Width} Height:{world.Height}");
                     AddDebugMenuEntry($"ClearingEntityTileBlocksColumns:{world.ClearingEntityTileBlocksColumns}");
                 }
@@ -230,8 +232,8 @@ namespace trosecnik.src
 
             // HUD
 
-            hud.Health = player.Health;
-            hud.Hunger = player.Hunger;
+            hud.Health = (int) ((double) player.Health * (100 / Player.MAX_HEALTH));
+            hud.Hunger = (int) ((double) player.Hunger * (100 / Player.MAX_HUNGER));
             hud.Draw();
         }
 

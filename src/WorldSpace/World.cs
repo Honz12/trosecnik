@@ -91,9 +91,10 @@ namespace trosecnik.src.WorldSpace
 
         public void DrawEntity(IEntity entity, Camera camera, ulong tick)
         {
+            Vector2 entitySize = entity.GetTextureSize(tick);
             Texture2D texture = TextureManager.GetTexture(entity.GetTexture(tick));
-            Rectangle sourceRec = new Rectangle(0, 0, texture.Width, texture.Height);
-            Rectangle destRec = new Rectangle((int) ((entity.GetPosition(tick).X - camera.X) * TileSize) + Program.ScreenCenterX - TileSize / 2, (int) ((entity.GetPosition(tick).Y - camera.Y) * TileSize) + Program.ScreenCenterY - TileSize / 2, TileSize, TileSize);
+            Rectangle sourceRec = new Rectangle(0, 0, texture.Width * entitySize.X, texture.Height * entitySize.Y);
+            Rectangle destRec = new Rectangle((int) ((entity.GetPosition(tick).X - camera.X) * TileSize * entitySize.X) + Program.ScreenCenterX - TileSize / 2, (int) ((entity.GetPosition(tick).Y - camera.Y) * TileSize * entitySize.Y) + Program.ScreenCenterY - TileSize / 2, TileSize, TileSize);
             Vector2 origin = Vector2.Zero;
             Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, Color.White);
         }

@@ -40,5 +40,10 @@ namespace trosecnik.src.WorldSpace.Entities
         }
 
         abstract protected void SimpleUpdate(Player player, World world, ulong tick);
+
+        public Vector2 GetTextureSize(ulong tick)
+        {
+            return new(1, 1);
+        }
     }
 }

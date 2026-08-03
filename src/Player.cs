@@ -8,6 +8,14 @@ namespace trosecnik.src
     public class Player
     {
         private const int MOVE_WAIT = 10;
+        private const double EXAUSTION_PER_STEP = 0.1;
+        private const double EXAUSTION_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
+        private const double THIRSTING_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
+        public const int MAX_HEALTH = 100;
+        public const int MAX_HUNGER = 100;
+        public const double MAX_SATURATION = 20.0;
+        public const int MAX_THIRST = 100;
+        public const double MAX_THIRSTING = 20.0;
 
         public enum MovementMode
         {
@@ -16,12 +24,17 @@ namespace trosecnik.src
 
         public int X;
         public int Y;
-        public int Health = 100;
         private byte direction = 0;
+
         public Pathfinder PlayerPathfinder;
         public Inventory PlayerInventory = new();
-        public double Saturation = 100.0;
-        public int Hunger = 100;
+
+        public int Health = MAX_HEALTH;
+        public int Hunger = MAX_HUNGER;
+        public double Saturation = MAX_SATURATION;
+        public int Thirst = MAX_THIRST;
+        public double Thirsting = MAX_SATURATION;
+
         private World PlayerWorld;
         private int moveWaiter = 0;
 
@@ -39,7 +52,8 @@ namespace trosecnik.src
 
         public void Update(ulong tick)
         {
-            Saturation -= 0.01;
+            Saturation -= EXAUSTION_PER_TICK;
+            Thirsting -= THIRSTING_PER_TICK;
             
             if (movementMode == MovementMode.Pathfind)
             {
@@ -56,7 +70,7 @@ namespace trosecnik.src
                         {
                             X = pos.Value.X;
                             Y = pos.Value.Y;
-                            Saturation -= 1.0;
+                            Saturation -= EXAUSTION_PER_STEP;
                         }
                     }
                 }
@@ -71,28 +85,34 @@ namespace trosecnik.src
                     {
                         moveY--;
                         moveWaiter = MOVE_WAIT;
+                        direction = 1;
                     }
                     if (Raylib.IsKeyDown(KeyboardKey.S))
                     {
                         moveY++;
                         moveWaiter = MOVE_WAIT;
+                        direction = 0;
                     }
                     if (Raylib.IsKeyDown(KeyboardKey.A))
                     {
                         moveX--;
                         moveWaiter = MOVE_WAIT;
+                        direction = 2;
                     }
                     if (Raylib.IsKeyDown(KeyboardKey.D))
                     {
                         moveX++;
                         moveWaiter = MOVE_WAIT;
+                        direction = 3;
                     }
 
-                    if (PlayerWorld.GetWalkable(X + moveX, Y + moveY))
-                    {
-                        X += moveX;
-                        Y += moveY;
-                    }
+                    if (moveX != 0 || moveY != 0)
+                        if (PlayerWorld.GetWalkable(X + moveX, Y + moveY))
+                        {
+                            X += moveX;
+                            Y += moveY;
+                            Saturation -= EXAUSTION_PER_STEP;
+                        }
                 }
                 moveWaiter--;
             }
@@ -104,14 +124,28 @@ namespace trosecnik.src
 
             if (Saturation <= 0)
             {
-                Saturation += 100.0;
+                Saturation += MAX_SATURATION;
                 Hunger--;
             }
 
-            Health = Math.Max(0, Math.Min(100, Health));
-            Hunger = Math.Max(0, Math.Min(100, Hunger));
+            if (Thirsting <= 0)
+            {
+                Thirsting += MAX_THIRSTING;
+                Thirst--;
+            }
 
-            PlayerInventory.Update();
+            PlayerInventory.Update(this);
+
+            if (Hunger > 95 && tick % 600 == 0)
+            {
+                Health++;
+            }
+
+            Health = Math.Max(0, Math.Min(MAX_HEALTH, Health));
+            Hunger = Math.Max(0, Math.Min(MAX_HUNGER, Hunger));
+            Thirst = Math.Max(0, Math.Min(MAX_HUNGER, Thirst));
+            Saturation = Math.Min(MAX_SATURATION, Saturation);
+            Thirsting = Math.Min(MAX_SATURATION, Thirsting);
         }
 
         public void Draw(int tileSize, Camera camera)

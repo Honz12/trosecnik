@@ -2,37 +2,28 @@ using System.Numerics;
 
 namespace trosecnik.src.InventorySpace.Items
 {
-    class RedBerriesItem : IItem
+    public class RedBerriesItem : ConsumableItemBase
     {
-        public void ConsumeItem(Player player)
+        public override void ConsumeAction(Player player)
         {
             player.Hunger += 20;
-            player.Saturation += 100;
+            player.Saturation = Player.MAX_SATURATION;
+            player.Health += 5;
         }
 
-        public void DropItem(Vector2 position)
+        public override void DropItem(Vector2 position, int idx)
         {
             throw new NotImplementedException();
         }
 
-        public string GetDisplayName()
+        public override string GetDisplayName()
         {
-            return "Cervené bobule";
+            return TransalationServer.GetTransalated("itemRedBerries");
         }
 
-        public IItem.ItemType GetItemType()
-        {
-            return IItem.ItemType.Consumable;
-        }
-
-        public string GetTexture()
+        public override string GetTexture()
         {
             return "items/item_0003.png";
-        }
-
-        public void PlaceItem(Vector2 position)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -8,6 +8,10 @@ namespace trosecnik.src
             { "gameName", "Trosečník" },
             { "deathMsg1", "Umřel jsi" },
             { "deathMsg2", "Mezerník pro ukončení hry" },
+            { "hudBarThirst", "Žízeň" },
+            { "hudBarHunger", "Hlad" },
+            { "hudBarHealth", "Zdraví" },
+            { "itemRedBerries", "Červené bobule"},
         };
         private static Dictionary<string, string> EngLanguage = new Dictionary<string, string>
         {
@@ -15,6 +19,10 @@ namespace trosecnik.src
             { "gameName", "Survivor" },
             { "deathMsg1", "You Died" },
             { "deathMsg2", "Space to exit the game" },
+            { "hudBarThirst", "Thirst" },
+            { "hudBarHunger", "Hunger" },
+            { "hudBarHealth", "Health" },
+            { "itemRedBerries", "Red Berries"},
         };
 
         private static string Language = "cz";

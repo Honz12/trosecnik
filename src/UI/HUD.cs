@@ -16,9 +16,9 @@ namespace trosecnik.src.UI
 
         public void Draw()
         {
-            DrawBar(TransalationServer.GetTransalated("hudBarThirst"), Water, 0, Color.Blue);
+            DrawBar(TransalationServer.GetTransalated("hudBarHealth"), Health, 0, Color.Red);
             DrawBar(TransalationServer.GetTransalated("hudBarHunger"), Hunger, 1, Color.Orange);
-            DrawBar(TransalationServer.GetTransalated("hudBarHealth"), Health, 2, Color.Red);
+            DrawBar(TransalationServer.GetTransalated("hudBarThirst"), Water, 1, Color.Blue);
         }
 
         private static void DrawBar(string label, float value, int idx, Color color)
@@ -36,12 +36,36 @@ namespace trosecnik.src.UI
                 new Color(0, 0, 0, 128)
             );
 
+            Program.DrawCustomText(
+                label,
+                origin.X + (BAR_HEIGHT - Program.DEFAULT_FONT_SIZE) / 2 * Program.GameGraphicsScale,
+                origin.Y + (BAR_HEIGHT - Program.DEFAULT_FONT_SIZE) / 2 * Program.GameGraphicsScale,
+                Program.DEFAULT_FONT_SIZE * Program.GameGraphicsScale,
+                Color.White
+            );
+
             Raylib.DrawRectangle(
                 (int) origin.X + LABEL_WIDTH * Program.GameGraphicsScale,
                 (int) origin.Y,
                 BAR_WIDTH * Program.GameGraphicsScale,
                 BAR_HEIGHT * Program.GameGraphicsScale,
                 new Color(64, 64, 64, 255)
+            );
+
+            Raylib.DrawRectangle(
+                (int) origin.X + LABEL_WIDTH * Program.GameGraphicsScale,
+                (int) origin.Y,
+                (int) (BAR_WIDTH * Program.GameGraphicsScale * (value / 100)),
+                BAR_HEIGHT * Program.GameGraphicsScale,
+                color
+            );
+
+            Raylib.DrawRectangle(
+                (int) origin.X + LABEL_WIDTH * Program.GameGraphicsScale,
+                (int) origin.Y + BAR_HEIGHT * Program.GameGraphicsScale / 2,
+                BAR_WIDTH * Program.GameGraphicsScale,
+                BAR_HEIGHT * Program.GameGraphicsScale / 2,
+                new Color(0, 0, 0, 64)
             );
 
             Raylib.DrawRectangleLinesEx(
@@ -66,6 +90,14 @@ namespace trosecnik.src.UI
                 ),
                 Program.GameGraphicsScale,
                 new Color(0, 0, 0, 255)
+            );
+
+            Program.DrawCustomText(
+                $"{(int) value}%",
+                origin.X + LABEL_WIDTH * Program.GameGraphicsScale + (BAR_HEIGHT - Program.DEFAULT_FONT_SIZE) / 2 * Program.GameGraphicsScale,
+                origin.Y + (BAR_HEIGHT - Program.DEFAULT_FONT_SIZE) / 2 * Program.GameGraphicsScale,
+                Program.DEFAULT_FONT_SIZE * Program.GameGraphicsScale,
+                Color.White
             );
         }
     }
