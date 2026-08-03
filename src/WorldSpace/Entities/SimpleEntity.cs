@@ -18,29 +18,32 @@ namespace trosecnik.src.WorldSpace.Entities
                 pathfinder = new(world);
                 pathfinder.SetStart((int) Position.X, (int) Position.Y);
                 pathfinder.SetTarget(player.X, player.Y);
-                pathfinder.Recalculate();
             }
 
             if (tick % 20 == 0)
             {
-                if (player.X != pathfinder.GetTargetX() || player.Y != pathfinder.GetTargetY() || pathfinder.Finished)
-                {
-                    pathfinder.SetStart((int) Position.X, (int) Position.Y);
-                    pathfinder.SetTarget(player.X, player.Y);
-                    pathfinder.Recalculate();
-                }
-
-                (int X, int Y)? pos = pathfinder.GetNextStep();
-
-                if (pos != null)
-                {
-                    Vector2 PrevPos = Position;
-                    Position.X = pos.Value.X;
-                    Position.Y = pos.Value.Y;
-                    if (Position.X == player.X && Position.Y == player.Y)
+                if (new Vector2(Position.X - player.X, Position.Y - player.Y).LengthSquared() < 100)
+                    if (player.X != pathfinder.GetTargetX() || player.Y != pathfinder.GetTargetY() || pathfinder.Finished)
                     {
-                        Position = PrevPos;
-                        player.Health -= 2;
+                        pathfinder.SetStart((int) Position.X, (int) Position.Y);
+                        pathfinder.SetTarget(player.X, player.Y);
+                        pathfinder.Recalculate();
+                    }
+
+                if (!pathfinder.Finished)
+                {
+                    (int X, int Y)? pos = pathfinder.GetNextStep();
+
+                    if (pos != null)
+                    {
+                        Vector2 PrevPos = Position;
+                        Position.X = pos.Value.X;
+                        Position.Y = pos.Value.Y;
+                        if (Position.X == player.X && Position.Y == player.Y)
+                        {
+                            Position = PrevPos;
+                            player.Health -= 2;
+                        }
                     }
                 }
             }

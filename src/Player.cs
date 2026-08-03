@@ -5,7 +5,7 @@ using trosecnik.src.WorldSpace;
 
 namespace trosecnik.src
 {
-    public class Player(int x, int y, World world)
+    public class Player
     {
         private const int MOVE_WAIT = 10;
 
@@ -14,19 +14,28 @@ namespace trosecnik.src
             Pathfind, WASD
         }
 
-        public int X = x;
-        public int Y = y;
-        public Vector2 PrevPosition = new(x, y);
+        public int X;
+        public int Y;
         public int Health = 100;
         private byte direction = 0;
-        public Pathfinder PlayerPathfinder = new(world);
+        public Pathfinder PlayerPathfinder;
         public Inventory PlayerInventory = new();
         public double Saturation = 100.0;
         public int Hunger = 100;
-
+        private World PlayerWorld;
         private int moveWaiter = 0;
 
         public MovementMode movementMode = MovementMode.WASD;
+
+        public Player(int x, int y, World world)
+        {
+            X = x;
+            Y = y;
+            PlayerWorld = world;
+            PlayerPathfinder = new(world);
+
+            PlayerInventory.AddItem(new InventorySpace.Items.RedBerriesItem());
+        }
 
         public void Update(ulong tick)
         {
@@ -34,7 +43,7 @@ namespace trosecnik.src
             
             if (movementMode == MovementMode.Pathfind)
             {
-                if (tick % 5 == 0)
+                if (tick % MOVE_WAIT == 0)
                 {
                     if (!PlayerPathfinder.Finished)
                     {
@@ -79,7 +88,7 @@ namespace trosecnik.src
                         moveWaiter = MOVE_WAIT;
                     }
 
-                    if (world.GetWalkable(X + moveX, Y + moveY))
+                    if (PlayerWorld.GetWalkable(X + moveX, Y + moveY))
                     {
                         X += moveX;
                         Y += moveY;
@@ -98,6 +107,9 @@ namespace trosecnik.src
                 Saturation += 100.0;
                 Hunger--;
             }
+
+            Health = Math.Max(0, Math.Min(100, Health));
+            Hunger = Math.Max(0, Math.Min(100, Hunger));
 
             PlayerInventory.Update();
         }

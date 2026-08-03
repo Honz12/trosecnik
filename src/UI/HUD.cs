@@ -5,37 +5,68 @@ namespace trosecnik.src.UI
 {
     public class HUD
     {
+        private const int BAR_HEIGHT = 24;
+        private const int BAR_MARGIN = 4;
+        private const int LABEL_WIDTH = 58;
+        private const int BAR_WIDTH = 128;
+
         public float Water = 100;
         public float Hunger = 100;
         public float Health = 100;
 
         public void Draw()
         {
-            DrawBar("Voda", Water, new Vector2(8 * Program.GameGraphicsScale, 8 * Program.GameGraphicsScale), Color.Blue);
-            DrawBar("Hlad", Hunger, new Vector2(8 * Program.GameGraphicsScale, 32 * Program.GameGraphicsScale), Color.Orange);
-            DrawBar("Zdraví", Health, new Vector2(8 * Program.GameGraphicsScale, 56 * Program.GameGraphicsScale), Color.Red);
+            DrawBar(TransalationServer.GetTransalated("hudBarThirst"), Water, 0, Color.Blue);
+            DrawBar(TransalationServer.GetTransalated("hudBarHunger"), Hunger, 1, Color.Orange);
+            DrawBar(TransalationServer.GetTransalated("hudBarHealth"), Health, 2, Color.Red);
         }
 
-        private static void DrawBar(string label, float value, Vector2 position, Color color)
+        private static void DrawBar(string label, float value, int idx, Color color)
         {
-            const int barWidth = 140;
-            const int barHeight = 16;
-            const int labelWidth = 60;
+            Vector2 origin = new(
+                BAR_MARGIN * Program.GameGraphicsScale,
+                (BAR_MARGIN + idx * (BAR_HEIGHT + BAR_MARGIN)) * Program.GameGraphicsScale
+            );
 
-            Raylib.DrawRectangle((int)position.X, (int)position.Y, labelWidth * Program.GameGraphicsScale, (barHeight + 2) * Program.GameGraphicsScale, new Color(0, 0, 0, 160));
-            Raylib.DrawText(label, (int)position.X + 4 * Program.GameGraphicsScale, (int)position.Y + 4 * Program.GameGraphicsScale, 10 * Program.GameGraphicsScale, Color.White);
+            Raylib.DrawRectangle(
+                (int) origin.X,
+                (int) origin.Y,
+                LABEL_WIDTH * Program.GameGraphicsScale,
+                BAR_HEIGHT * Program.GameGraphicsScale,
+                new Color(0, 0, 0, 128)
+            );
 
-            int x = (int)position.X + labelWidth * Program.GameGraphicsScale;
-            Raylib.DrawRectangle(x, (int)position.Y, (barWidth + 2) * Program.GameGraphicsScale, (barHeight + 2) * Program.GameGraphicsScale, Color.Black);
-            Raylib.DrawRectangle(x + Program.GameGraphicsScale, (int)position.Y + Program.GameGraphicsScale, barWidth * Program.GameGraphicsScale, barHeight * Program.GameGraphicsScale, new Color(40, 40, 40, 255));
+            Raylib.DrawRectangle(
+                (int) origin.X + LABEL_WIDTH * Program.GameGraphicsScale,
+                (int) origin.Y,
+                BAR_WIDTH * Program.GameGraphicsScale,
+                BAR_HEIGHT * Program.GameGraphicsScale,
+                new Color(64, 64, 64, 255)
+            );
 
-            float ratio = Math.Clamp(value / 100f, 0f, 1f);
-            if (ratio > 0)
-            {
-                Raylib.DrawRectangle(x + Program.GameGraphicsScale, (int)position.Y + Program.GameGraphicsScale, (int)(barWidth * ratio) * Program.GameGraphicsScale, barHeight * Program.GameGraphicsScale, color);
-            }
+            Raylib.DrawRectangleLinesEx(
+                new(
+                    (int) origin.X,
+                    (int) origin.Y,
+                    (BAR_WIDTH + LABEL_WIDTH) * Program.GameGraphicsScale,
+                    BAR_HEIGHT * Program.GameGraphicsScale
+                ),
+                Program.GameGraphicsScale,
+                new Color(0, 0, 0, 255)
+            );
 
-            Raylib.DrawText($"{Math.Max(0, (int)value)}%", x + 4 * Program.GameGraphicsScale, (int)position.Y + 4 * Program.GameGraphicsScale, 10 * Program.GameGraphicsScale, Color.Black);
+            Raylib.DrawLineEx(
+                new(
+                    origin.X + LABEL_WIDTH * Program.GameGraphicsScale,
+                    origin.Y
+                ),
+                new(
+                    origin.X + LABEL_WIDTH * Program.GameGraphicsScale,
+                    origin.Y + BAR_HEIGHT * Program.GameGraphicsScale
+                ),
+                Program.GameGraphicsScale,
+                new Color(0, 0, 0, 255)
+            );
         }
     }
 }

@@ -8,6 +8,7 @@ namespace trosecnik.src.InventorySpace
         public const int INVENTORY_SIZE = 30;
         private const int SLOTS_PER_ROW = 5;
         private const int SLOT_SIZE_PX = 22;
+        private const int ITEM_SIZE_PX = 16;
 
         private int Selected = 0;
 
@@ -92,6 +93,28 @@ namespace trosecnik.src.InventorySpace
                         new(
                             x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX, y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY,
                             SLOT_SIZE_PX * Program.GameGraphicsScale, SLOT_SIZE_PX * Program.GameGraphicsScale
+                        ),
+                        Vector2.Zero,
+                        0.0f,
+                        Color.White
+                    );
+                }
+
+                if (item != null)
+                {
+                    Texture2D itemTexture = TextureManager.GetTexture(item.GetTexture());
+
+                    Raylib.DrawTexturePro(
+                        itemTexture,
+                        new(
+                            0, 0,
+                            ITEM_SIZE_PX, ITEM_SIZE_PX
+                        ),
+                        new(
+                            x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale,
+                            y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale,
+                            ITEM_SIZE_PX * Program.GameGraphicsScale,
+                            ITEM_SIZE_PX * Program.GameGraphicsScale
                         ),
                         Vector2.Zero,
                         0.0f,

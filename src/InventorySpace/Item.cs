@@ -4,31 +4,36 @@ namespace trosecnik.src.InventorySpace
 {
     public interface IItem
     {
+        public enum ItemType
+        {
+            NoInteraction, Consumable, Placeable
+        }
+
         public string GetTexture();
 
-        public bool CanItemBeDropped();
-        public bool CanItemBeConsumed();
-        public bool CanItemBePlaced();
+        public string GetDisplayName();
+
+        public ItemType GetItemType();
         
         /// <summary>
         /// Consumes an item.
         /// </summary>
         /// <param name="position"></param>
         /// <returns>If the item has successfully been consumed</returns>
-        public bool ConsumeItem(Player player);
+        public void ConsumeItem(Player player);
 
         /// <summary>
         /// Drops the item on the ground.
         /// </summary>
         /// <param name="position"></param>
         /// <returns>If the item has successfully dropped</returns>
-        public bool DropItem(Vector2 position);
+        public void DropItem(Vector2 position);
 
         /// <summary>
         /// Drops the item on the ground.
         /// </summary>
         /// <param name="position"></param>
         /// <returns>If the item has successfully dropped</returns>
-        public bool PlaceItem(Vector2 position);
+        public void PlaceItem(Vector2 position);
     }
 }

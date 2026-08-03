@@ -14,6 +14,7 @@ namespace trosecnik.src
 
         public const int BASE_TILE_SIZE = 16;
         public const int MINI_TILE_SIZE = 4;
+        public const int DEFAULT_FONT_SIZE = 16;
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
@@ -44,6 +45,9 @@ namespace trosecnik.src
 
         public static AppMode appMode = AppMode.Playing;
 
+        private static Font font;
+        private static float fontSpacing = 0;
+
         public static void AddDebugMenuEntry(string entry)
         {
             int fontSize = 10 * GameGraphicsScale;
@@ -52,10 +56,10 @@ namespace trosecnik.src
             {
                 for (int oy = -1; oy <= 1; oy++)
                 {
-                    Raylib.DrawText(entry, padding + ox * GameGraphicsScale, padding + (padding + fontSize) * debugMenuEntries + oy * GameGraphicsScale, fontSize, Color.Black);
+                    DrawCustomText(entry, padding + ox * GameGraphicsScale, padding + (padding + fontSize) * debugMenuEntries + oy * GameGraphicsScale, fontSize, Color.Black);
                 }
             }
-            Raylib.DrawText(entry, padding, padding + (padding + fontSize) * debugMenuEntries, fontSize, Color.Magenta);
+            DrawCustomText(entry, padding, padding + (padding + fontSize) * debugMenuEntries, fontSize, Color.Magenta);
             debugMenuEntries++;
         }
 
@@ -63,11 +67,13 @@ namespace trosecnik.src
         {
             Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow | ConfigFlags.FullscreenMode);
 
-            Raylib.InitWindow(ScreenWidth, ScreenHeight, $"Trosečník {VER_STRING}");
+            Raylib.InitWindow(ScreenWidth, ScreenHeight, $"{TransalationServer.GetTransalated("gameName")} {VER_STRING}");
 
             Raylib.SetExitKey(KeyboardKey.Null);
 
             Raylib.SetTargetFPS(60);
+
+            font = Raylib.LoadFont("assets/PXPLUS_IBM_VGA8.TTF");
 
             while (!Raylib.WindowShouldClose() && !ShouldExit)
             {
@@ -91,6 +97,18 @@ namespace trosecnik.src
                 if (Raylib.IsKeyPressed(KeyboardKey.F11))
                 {
                     Raylib.ToggleFullscreen();
+                }
+
+                if (Raylib.IsKeyPressed(KeyboardKey.F1))
+                {
+                    if (TransalationServer.GetLanguage() == "cz")
+                    {
+                        TransalationServer.SetLanguage("eng");
+                    }
+                    else if (TransalationServer.GetLanguage() == "eng")
+                    {
+                        TransalationServer.SetLanguage("cz");
+                    }
                 }
 
                 if (Raylib.IsKeyPressed(KeyboardKey.F2))
@@ -150,7 +168,7 @@ namespace trosecnik.src
                             player.PlayerPathfinder.Recalculate();
                         }
 
-                        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                        if (Raylib.IsMouseButtonPressed(MouseButton.Side))
                         {
                             WorldSpace.Entities.SimpleEntity simpleEntity = new();
 
@@ -207,6 +225,13 @@ namespace trosecnik.src
             hud.Draw();
         }
 
+        public static void DrawCustomText(string text, float x, float y, float fontSize, Color color)
+        {
+            Raylib.DrawTextEx(
+                font, text, new Vector2(x, y), fontSize, fontSpacing, color
+            );
+        }
+
         private static void AppRender(Vector2 mouseWorldPosition)
         {
             switch (appMode)
@@ -223,11 +248,23 @@ namespace trosecnik.src
 
                         Raylib.DrawRectangle(0, 0, ScreenWidth, ScreenHeight, new Color(0, 0, 0, 256 - 64));
                         
-                        const string text1 = "Umrel jsi";
-                        const string text2 = "Mezerník pro ukoncení hry";
+                        string text1 = TransalationServer.GetTransalated("deathMsg1");
+                        string text2 = TransalationServer.GetTransalated("deathMsg2");
 
-                        Raylib.DrawText(text1, ScreenCenterX - Raylib.MeasureText(text1, 20 * GameGraphicsScale) / 2, ScreenCenterY - 20 - 5 * GameGraphicsScale, 20 * GameGraphicsScale, Color.Red);
-                        Raylib.DrawText(text2, ScreenCenterX - Raylib.MeasureText(text2, 20 * GameGraphicsScale) / 2, ScreenCenterY + 20 - 5 * GameGraphicsScale, 20 * GameGraphicsScale, Color.Red);
+                        DrawCustomText(
+                            text1,
+                            ScreenCenterX - Raylib.MeasureTextEx(font, text1, 20 * GameGraphicsScale, fontSpacing).X / 2,
+                            ScreenCenterY - 5 * GameGraphicsScale - 30 * GameGraphicsScale,
+                            20 * GameGraphicsScale,
+                            Color.Red
+                        );
+                        DrawCustomText(
+                            text2,
+                            ScreenCenterX - Raylib.MeasureTextEx(font, text2, 20 * GameGraphicsScale, fontSpacing).X / 2,
+                            ScreenCenterY - 5 * GameGraphicsScale + 30 * GameGraphicsScale,
+                            20 * GameGraphicsScale,
+                            Color.Red
+                        );
                     }
                     break;
             }
