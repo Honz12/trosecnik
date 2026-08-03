@@ -27,6 +27,11 @@ namespace trosecnik.src.WorldSpace.Entities
             return GetTexturePath(tick);
         }
 
+        public string? GetTextureAbove(ulong tick)
+        {
+            return null;
+        }
+
         abstract protected string GetTexturePath(ulong tick);
 
         public void SetPos(Vector2 position)

@@ -11,8 +11,6 @@ namespace trosecnik.src.InventorySpace.Items
         }
         public abstract void ConsumeAction(Player player);
 
-        public abstract void DropItem(Vector2 position, int idx);
-
         public abstract string GetDisplayName();
 
         public IItem.ItemType GetItemType()

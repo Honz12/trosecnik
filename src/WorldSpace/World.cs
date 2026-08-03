@@ -1,5 +1,7 @@
 using System.Numerics;
+using System.Reflection.PortableExecutable;
 using Raylib_cs;
+using trosecnik.src.InventorySpace;
 
 namespace trosecnik.src.WorldSpace
 {
@@ -51,7 +53,7 @@ namespace trosecnik.src.WorldSpace
             GenerateWorld(seed);
         }
 
-        public void Draw(Camera camera, ulong tick)
+        public void Draw(Player player, Camera camera, ulong tick)
         {
             int offsetX = (int) camera.X;
             int offsetY = (int) camera.Y;
@@ -80,6 +82,11 @@ namespace trosecnik.src.WorldSpace
             {
                 DrawEntity(entity, camera, tick);
             }
+            player.Draw(TileSize, camera);
+            foreach (var entity in entities)
+            {
+                DrawEntityAbove(entity, camera, tick);
+            }
         }
 
         public ITile GetTile(int x, int y)
@@ -93,15 +100,36 @@ namespace trosecnik.src.WorldSpace
         {
             Vector2 entitySize = entity.GetTextureSize(tick);
             Texture2D texture = TextureManager.GetTexture(entity.GetTexture(tick));
-            Rectangle sourceRec = new Rectangle(0, 0, texture.Width * entitySize.X, texture.Height * entitySize.Y);
-            Rectangle destRec = new Rectangle((int) ((entity.GetPosition(tick).X - camera.X) * TileSize * entitySize.X) + Program.ScreenCenterX - TileSize / 2, (int) ((entity.GetPosition(tick).Y - camera.Y) * TileSize * entitySize.Y) + Program.ScreenCenterY - TileSize / 2, TileSize, TileSize);
+            Rectangle sourceRec = new(0, 0, texture.Width, texture.Height);
+            Rectangle destRec = new(
+                (int) ((entity.GetPosition(tick).X - camera.X) * TileSize) + Program.ScreenCenterX - TileSize / 2,
+                (int) ((entity.GetPosition(tick).Y - camera.Y) * TileSize) + Program.ScreenCenterY - TileSize / 2,
+                TileSize * entitySize.X, TileSize * entitySize.Y
+            );
             Vector2 origin = Vector2.Zero;
             Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, Color.White);
+        }
+
+        public void DrawEntityAbove(IEntity entity, Camera camera, ulong tick)
+        {
+            Vector2 entitySize = entity.GetTextureSize(tick);
+            if (entity.GetTextureAbove(tick) != null) {
+                Texture2D texture = TextureManager.GetTexture(entity.GetTextureAbove(tick)!);
+                Rectangle sourceRec = new(0, 0, texture.Width, texture.Height);
+                Rectangle destRec = new(
+                    (int) ((entity.GetPosition(tick).X - camera.X) * TileSize) + Program.ScreenCenterX - TileSize / 2,
+                    (int) ((entity.GetPosition(tick).Y - camera.Y) * TileSize) + Program.ScreenCenterY - TileSize / 2,
+                    TileSize * entitySize.X, TileSize * entitySize.Y
+                );
+                Vector2 origin = Vector2.Zero;
+                Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, Color.White);
+            }
         }
 
         private void GenerateWorld(int seed)
         {
             FastNoiseLite heightNoise = new(seed);
+            Random rng = new(seed);
 
             heightNoise.SetNoiseType(FastNoiseLite.NoiseType.Value);
             heightNoise.SetFrequency(0.03f);
@@ -123,6 +151,8 @@ namespace trosecnik.src.WorldSpace
             riverNoise.SetFractalWeightedStrength(0f);
             */
 
+            List<Vector2> grassTiles = [];
+
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
@@ -131,6 +161,7 @@ namespace trosecnik.src.WorldSpace
                     if (height > 0.1)
                     {
                         tiles[x, y] = new Tiles.GrassTile();
+                        grassTiles.Add(new (x, y));
                     }
                     else if (height > 0)
                     {
@@ -144,6 +175,41 @@ namespace trosecnik.src.WorldSpace
                     {
                         tiles[x, y] = new Tiles.DeepWaterTile();
                     }
+                }
+            }
+
+            Dictionary<Vector2, Entities.TreeEntity> trees = [];
+
+            foreach (var coords in grassTiles)
+            {
+                if (rng.Next(100) == 0)
+                {
+                    bool validPosition = true;
+
+                    for (int x = -2; x <= 2; x++)
+                    {
+                        for (int y = -2; y <= 2; y++)
+                        {
+                            if (trees.ContainsKey(new Vector2(x + coords.X, y + coords.Y)))
+                            {
+                                validPosition = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!validPosition)
+                    {
+                        continue;
+                    }
+
+                    var treeEntity = new Entities.TreeEntity();
+
+                    treeEntity.SetPos(coords);
+
+                    entities.Add(treeEntity);
+
+                    trees.Add(coords, treeEntity);
                 }
             }
         }
@@ -219,6 +285,11 @@ namespace trosecnik.src.WorldSpace
             ITile tile = GetTile(x, y);
 
             return tile.GetWalkable();
+        }
+
+        public int GetEntityCount()
+        {
+            return entities.Count;
         }
     }
 }

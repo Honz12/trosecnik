@@ -11,11 +11,6 @@ namespace trosecnik.src.InventorySpace.Items
             player.Health += 5;
         }
 
-        public override void DropItem(Vector2 position, int idx)
-        {
-            throw new NotImplementedException();
-        }
-
         public override string GetDisplayName()
         {
             return TransalationServer.GetTransalated("itemRedBerries");

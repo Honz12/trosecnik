@@ -50,7 +50,7 @@ namespace trosecnik.src
             PlayerInventory.AddItem(new InventorySpace.Items.RedBerriesItem());
         }
 
-        public void Update(ulong tick)
+        public void Update(ulong tick, Vector2 mousePosition)
         {
             Saturation -= EXAUSTION_PER_TICK;
             Thirsting -= THIRSTING_PER_TICK;
@@ -134,7 +134,7 @@ namespace trosecnik.src
                 Thirst--;
             }
 
-            PlayerInventory.Update(this);
+            PlayerInventory.Update(this, mousePosition);
 
             if (Hunger > 95 && tick % 600 == 0)
             {

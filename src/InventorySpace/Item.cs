@@ -27,13 +27,6 @@ namespace trosecnik.src.InventorySpace
         /// </summary>
         /// <param name="position"></param>
         /// <returns>If the item has successfully dropped</returns>
-        public void DropItem(Vector2 position, int idx);
-
-        /// <summary>
-        /// Drops the item on the ground.
-        /// </summary>
-        /// <param name="position"></param>
-        /// <returns>If the item has successfully dropped</returns>
         public void PlaceItem(Vector2 position, int idx);
     }
 }

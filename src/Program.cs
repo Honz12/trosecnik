@@ -156,7 +156,7 @@ namespace trosecnik.src
                     AddDebugMenuEntry($"Cursor - WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
                     AddDebugMenuEntry($"Health:{player.Health} Hunger:{player.Hunger} Saturation:{player.Saturation:F2} Thirst:{player.Thirst} Thirsting:{player.Thirsting:F2}");
                     AddDebugMenuEntry($"World - Width:{world.Width} Height:{world.Height}");
-                    AddDebugMenuEntry($"ClearingEntityTileBlocksColumns:{world.ClearingEntityTileBlocksColumns}");
+                    AddDebugMenuEntry($"EntityCount:{world.GetEntityCount()} ClearingEntityTileBlocksColumns:{world.ClearingEntityTileBlocksColumns}");
                 }
 
                 Raylib.EndDrawing();
@@ -189,7 +189,7 @@ namespace trosecnik.src
                             world.AddEntity(simpleEntity);
                         }
 
-                        player.Update(Tick);
+                        player.Update(Tick, mouseWorldPosition);
                         camera.X += (player.X - camera.X) * 0.1;
                         camera.Y += (player.Y - camera.Y) * 0.1;
 
@@ -211,9 +211,7 @@ namespace trosecnik.src
         {
             Raylib.ClearBackground(Color.Black);
 
-            world.Draw(camera, Tick);
-
-            player.Draw(world.TileSize, camera);
+            world.Draw(player, camera, Tick);
 
             for (int ox = -2; ox <= 2; ox++)
             {

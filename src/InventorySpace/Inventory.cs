@@ -137,7 +137,7 @@ namespace trosecnik.src.InventorySpace
             }
         }
 
-        public void Update(Player player)
+        public void Update(Player player, Vector2 interactionPosition)
         {
             float scroll = Raylib.GetMouseWheelMove();
 
@@ -152,13 +152,12 @@ namespace trosecnik.src.InventorySpace
 
             Selected += INVENTORY_SIZE;
             Selected %= INVENTORY_SIZE;
-
-            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+            if (Selected < Items.Count)
             {
-                if (Selected < Items.Count)
+                IItem item = Items[Selected];
+                
+                if (Raylib.IsMouseButtonPressed(MouseButton.Right))
                 {
-                    IItem item = Items[Selected];
-                    
                     switch (item.GetItemType())
                     {
                         case IItem.ItemType.Consumable:
@@ -166,6 +165,24 @@ namespace trosecnik.src.InventorySpace
                             break;
                         default:
                             break;
+                    }
+                }
+                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                {
+                    if (
+                        new Vector2(
+                            interactionPosition.X - player.X,
+                            interactionPosition.Y - player.Y
+                        ).LengthSquared() < 9
+                    )
+                    {
+                        WorldSpace.Entities.ItemDropEntity itemDrop = new(item);
+
+                        itemDrop.SetPos(interactionPosition);
+
+                        Program.world.AddEntity(itemDrop);
+
+                        player.PlayerInventory.DeleteItem(Selected);
                     }
                 }
             }

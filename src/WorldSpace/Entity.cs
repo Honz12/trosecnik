@@ -10,6 +10,7 @@ namespace trosecnik.src.WorldSpace
         }
 
         public string GetTexture(ulong tick);
+        public string? GetTextureAbove(ulong tick);
         public Vector2 GetPosition(ulong tick);
 
         /// <summary>
