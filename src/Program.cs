@@ -1,5 +1,6 @@
 using System.Numerics;
 using Raylib_cs;
+using trosecnik.src.UI;
 using trosecnik.src.WorldSpace;
 
 namespace trosecnik.src
@@ -10,7 +11,7 @@ namespace trosecnik.src
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
-        public const string VER_STRING = "0.1";
+        public const string VER_STRING = "0.2";
 
         public static int ScreenWidth = 640;
         public static int ScreenHeight = 360;
@@ -26,10 +27,17 @@ namespace trosecnik.src
             X = world.Width / 2,
             Y = world.Height / 2,
         };
+        public static Camera camera = new()
+        {
+            X = player.X,
+            Y = player.Y,
+        };
+        public static HUD hud = new();
 
         public static ulong Tick;
         private static int debugMenuEntries = 0;
         private static bool miniTiles = false;
+        private static bool DebugShown = false;
 
         public static void AddDebugMenuEntry(string entry)
         {
@@ -73,7 +81,7 @@ namespace trosecnik.src
                 // --- UPDATE LOGIC ---
 
                 Vector2 mousePosition = Raylib.GetMousePosition();
-                Vector2 mouseWorldPosition = new((float) Math.Round((mousePosition.X - ScreenCenterX) / world.TileSize) + player.X, (float) Math.Round((mousePosition.Y - ScreenCenterY) / world.TileSize) + player.Y);
+                Vector2 mouseWorldPosition = new((float) (Math.Round((mousePosition.X - ScreenCenterX) / world.TileSize) + camera.X), (float) (Math.Round((mousePosition.Y - ScreenCenterY) / world.TileSize) + camera.Y));
 
                 if (Raylib.IsKeyPressed(KeyboardKey.F11))
                 {
@@ -85,6 +93,11 @@ namespace trosecnik.src
                     miniTiles = !miniTiles;
                 }
 
+                if (Raylib.IsKeyPressed(KeyboardKey.F3))
+                {
+                    DebugShown = !DebugShown;
+                }
+
                 if (Raylib.IsMouseButtonPressed(MouseButton.Left))
                 {
                     player.PlayerPathfinder.SetStart(player.X, player.Y);
@@ -93,6 +106,9 @@ namespace trosecnik.src
                 }
 
                 player.Update(Tick);
+                //camera.Update();
+                camera.X += (player.X - camera.X) * 0.1;
+                camera.Y += (player.Y - camera.Y) * 0.1;
 
                 // --- DRAW LOGIC HERE ---
                 debugMenuEntries = 0;
@@ -101,21 +117,41 @@ namespace trosecnik.src
                 
                 Raylib.ClearBackground(Color.Black);
 
-                world.Draw(player.X, player.Y, Tick);
+                world.Draw((int) camera.X, (int) camera.Y, Tick, camera.X % 1, camera.Y % 1);
 
-                player.Draw(world.TileSize);
+                player.Draw(world.TileSize, camera);
 
-                AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
-                string mtString = miniTiles ? " [MT]" : "";
+                for (int ox = -2; ox <= 2; ox++)
+                {
+                    for (int oy = -2; oy <= 2; oy++)
+                    {
+                        Raylib.DrawRectangleLinesEx(
+                            new Rectangle(
+                                (int) ((mouseWorldPosition.X - camera.X + ox) * world.TileSize) + ScreenCenterX - world.TileSize / 2,
+                                (int) ((mouseWorldPosition.Y - camera.Y + oy) * world.TileSize) + ScreenCenterY - world.TileSize / 2,
+                                world.TileSize, world.TileSize
+                            ),
+                            GameGraphicsScale,
+                            (ox == 0 && oy == 0) ? new Color(255, 255, 255, 128) : ((Math.Abs(ox) == 2 || Math.Abs(oy) == 2) ? new Color(255, 255, 255, 16) : new Color(255, 255, 255, 64)));
+                    }
+                }
 
-                Raylib.DrawRectangleLinesEx(new Rectangle(((mouseWorldPosition.X - player.X) * world.TileSize) + ScreenCenterX - world.TileSize / 2, ((mouseWorldPosition.Y - player.Y) * world.TileSize) + ScreenCenterY - world.TileSize / 2, world.TileSize, world.TileSize), GameGraphicsScale, Color.RayWhite);
+                hud.Draw();
 
-                AddDebugMenuEntry($"<PLAYER> X:{player.X} Y:{player.Y}");
-                AddDebugMenuEntry($"<WORLD> W:{world.Width} H:{world.Height}");
-                AddDebugMenuEntry($"<VIEWPORT> TW:{ScreenTilesHor} TH:{ScreenTilesVer}{mtString}");
-                AddDebugMenuEntry($"<SCREEN> W:{ScreenWidth} H:{ScreenHeight} GGS:{GameGraphicsScale}");
-                AddDebugMenuEntry($"<TILE> S-PX:{world.TileSize}");
-                AddDebugMenuEntry($"<MOUSE> X:{mouseWorldPosition.X} Y:{mouseWorldPosition.Y}");
+                // Debug
+
+                if (DebugShown)
+                {
+                    AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
+                    string mtString = miniTiles ? " [MT]" : "";
+
+                    AddDebugMenuEntry($"<PLAYER> X:{player.X} Y:{player.Y}");
+                    AddDebugMenuEntry($"<WORLD> W:{world.Width} H:{world.Height}");
+                    AddDebugMenuEntry($"<VIEWPORT> TW:{ScreenTilesHor} TH:{ScreenTilesVer}{mtString}");
+                    AddDebugMenuEntry($"<SCREEN> W:{ScreenWidth} H:{ScreenHeight} GGS:{GameGraphicsScale}");
+                    AddDebugMenuEntry($"<TILE> S-PX:{world.TileSize}");
+                    AddDebugMenuEntry($"<MOUSE> X:{mouseWorldPosition.X} Y:{mouseWorldPosition.Y}");
+                }
 
                 Raylib.EndDrawing();
 

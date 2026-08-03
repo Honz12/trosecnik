@@ -43,11 +43,11 @@ namespace trosecnik.src.WorldSpace
             GenerateWorld(seed);
         }
 
-        public void Draw(int offsetX, int offsetY, ulong tick)
+        public void Draw(int offsetX, int offsetY, ulong tick, double offsetLittleX, double offsetLittleY)
         {
-            for(int rx = -Program.ScreenTilesHor; rx < Program.ScreenTilesHor / 2 + 1; rx++)
+            for(int rx = -Program.ScreenTilesHor / 2; rx < Program.ScreenTilesHor / 2 + 2; rx++)
             {
-                for (int ry = -Program.ScreenTilesVer; ry < Program.ScreenTilesVer / 2 + 1; ry++)
+                for (int ry = -Program.ScreenTilesVer / 2; ry < Program.ScreenTilesVer / 2 + 2; ry++)
                 {
                     int x = rx + offsetX;
                     int y = ry + offsetY;
@@ -58,7 +58,7 @@ namespace trosecnik.src.WorldSpace
                     ITile tile = tiles[x, y];
 
                     string tileId = $"tiles/tile_{tile.GetTextureId(tick):D4}.png";
-                    Vector2 position = new(rx * TileSize, ry * TileSize);
+                    Vector2 position = new((float) ((rx - offsetLittleX) * TileSize), (float) ((ry - offsetLittleY) * TileSize));
 
                     TileRenderer.DrawTile(tileId, position, TileSize);
                 }

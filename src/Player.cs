@@ -28,11 +28,11 @@ namespace trosecnik.src
             }
         }
 
-        public void Draw(int tileSize)
+        public void Draw(int tileSize, Camera camera)
         {
             Texture2D texture = TextureManager.GetTexture($"player/player_{direction + 1:D4}.png");
             Rectangle sourceRec = new Rectangle(0, 0, texture.Width, texture.Height);
-            Rectangle destRec = new Rectangle(Program.ScreenCenterX - tileSize / 2, Program.ScreenCenterY - tileSize / 2, tileSize, tileSize);
+            Rectangle destRec = new Rectangle((int) ((X - camera.X) * world.TileSize) + Program.ScreenCenterX - world.TileSize / 2, (int) ((Y - camera.Y) * world.TileSize) + Program.ScreenCenterY - world.TileSize / 2, world.TileSize, world.TileSize);
             Vector2 origin = Vector2.Zero;
             Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, Color.White);
         }
