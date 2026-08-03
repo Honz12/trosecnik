@@ -1,45 +1,30 @@
 using Raylib_cs;
 using System.Numerics;
+using trosecnik.src.WorldSpace;
 
 namespace trosecnik.src
 {
-    public class Player
+    public class Player(World world)
     {
         public int X = 0;
         public int Y = 0;
         private byte direction = 0;
-        public bool Flying = false;
+        public Pathfinder PlayerPathfinder = new(world);
 
-        public void Update()
+        public void Update(ulong tick)
         {
-            int targetX = X;
-            int targetY = Y;
+            if (tick % 10 == 0)
+            {
+                if (!PlayerPathfinder.Finished)
+                {
+                    (int X, int Y)? pos = PlayerPathfinder.GetNextStep();
 
-            if (Raylib.IsKeyPressed(KeyboardKey.W) || (Raylib.IsKeyDown(KeyboardKey.W) && Flying))
-            {
-                direction = 1;
-                targetY--;
-            }
-            if (Raylib.IsKeyPressed(KeyboardKey.A) || (Raylib.IsKeyDown(KeyboardKey.A) && Flying))
-            {
-                direction = 2;
-                targetX--;
-            }
-            if (Raylib.IsKeyPressed(KeyboardKey.S) || (Raylib.IsKeyDown(KeyboardKey.S) && Flying))
-            {
-                direction = 0;
-                targetY++;
-            }
-            if (Raylib.IsKeyPressed(KeyboardKey.D) || (Raylib.IsKeyDown(KeyboardKey.D) && Flying))
-            {
-                direction = 3;
-                targetX++;
-            }
-
-            if (Program.world.GetTile(targetX, targetY).GetWalkable() || Flying)
-            {
-                X = targetX;
-                Y = targetY;
+                    if (pos != null)
+                    {
+                        X = pos.Value.X;
+                        Y = pos.Value.Y;
+                    }
+                }
             }
         }
 

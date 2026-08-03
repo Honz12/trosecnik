@@ -1,10 +1,10 @@
-namespace trosecnik.src.World.Tiles
+namespace trosecnik.src.WorldSpace.Tiles
 {
-    public class SandTile : ITile
+    public class GrassTile : ITile
     {
         public uint GetTextureId(ulong tick)
         {
-            return 11;
+            return 10;
         }
 
         public bool GetWalkable()

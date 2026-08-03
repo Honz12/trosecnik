@@ -1,7 +1,7 @@
 using System.Numerics;
 using Raylib_cs;
 
-namespace trosecnik.src.World
+namespace trosecnik.src.WorldSpace
 {
     public class TileRenderer
     {

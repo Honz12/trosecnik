@@ -1,10 +1,10 @@
-namespace trosecnik.src.World.Tiles
+namespace trosecnik.src.WorldSpace.Tiles
 {
-    public class VoidTile : ITile
+    public class DeepWaterTile : ITile
     {
         public uint GetTextureId(ulong tick)
         {
-            return 1;
+            return 12u + (uint) (tick / 30 % 8);
         }
 
         public bool GetWalkable()

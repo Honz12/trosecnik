@@ -1,4 +1,4 @@
-namespace trosecnik.src.World.Tiles
+namespace trosecnik.src.WorldSpace.Tiles
 {
     public class WaterTile : ITile
     {

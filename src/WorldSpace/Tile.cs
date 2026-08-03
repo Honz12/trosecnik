@@ -1,4 +1,4 @@
-namespace trosecnik.src.World
+namespace trosecnik.src.WorldSpace
 {
     public interface ITile
     {
