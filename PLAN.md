@@ -62,8 +62,8 @@ Hráč musí hlídat tři ukazatele:
 - [x] HUD s ukazateli (voda, hlad, zdraví)
 
 ### Fáze 2 – Přežití
-- [ ] Ztráta hladu / vody / zdraví v čase
-- [ ] Sběr jídla a vody (ryby, zajíci, slepice)
+- [x] Ztráta hladu / vody v čase
+- [ ] Sběr jídla a vody (bobule, ryby, zajíci, slepice)
 - [ ] Systém dne a noci
 
 ### Fáze 3 – Stavění

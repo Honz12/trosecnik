@@ -13,6 +13,7 @@ namespace trosecnik.src
         }
 
         public const int BASE_TILE_SIZE = 16;
+        public const int MINI_TILE_SIZE = 4;
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
@@ -27,11 +28,7 @@ namespace trosecnik.src
         public static int GameGraphicsScale = 1;
 
         public static World world = new(512, 512, 0);
-        public static Player player = new(world)
-        {
-            X = world.Width / 2,
-            Y = world.Height / 2,
-        };
+        public static Player player = new(world.Width / 2, world.Height / 2, world);
         public static Camera camera = new()
         {
             X = player.X,
@@ -43,6 +40,7 @@ namespace trosecnik.src
         private static int debugMenuEntries = 0;
         private static bool miniTiles = false;
         private static bool DebugShown = false;
+        private static bool ShouldExit = false;
 
         public static AppMode appMode = AppMode.Playing;
 
@@ -63,7 +61,7 @@ namespace trosecnik.src
 
         public static void Main()
         {
-            Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow);
+            Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow | ConfigFlags.FullscreenMode);
 
             Raylib.InitWindow(ScreenWidth, ScreenHeight, $"Trosečník {VER_STRING}");
 
@@ -71,13 +69,13 @@ namespace trosecnik.src
 
             Raylib.SetTargetFPS(60);
 
-            while (!Raylib.WindowShouldClose())
+            while (!Raylib.WindowShouldClose() && !ShouldExit)
             {
                 ScreenWidth = Raylib.GetScreenWidth();
                 ScreenHeight = Raylib.GetScreenHeight();
 
                 GameGraphicsScale = Math.Max(1, Math.Min(ScreenWidth / 640, ScreenHeight / 360));
-                world.TileSize = miniTiles ? 1 : (GameGraphicsScale * BASE_TILE_SIZE);
+                world.TileSize = miniTiles ? (GameGraphicsScale * MINI_TILE_SIZE) : (GameGraphicsScale * BASE_TILE_SIZE);
 
                 ScreenTilesHor = ScreenWidth / world.TileSize;
                 ScreenTilesVer = ScreenHeight / world.TileSize;
@@ -122,10 +120,13 @@ namespace trosecnik.src
                     AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
                     string mtString = miniTiles ? " [MT]" : "";
 
-                    AddDebugMenuEntry($"Position X:{player.X} Y:{player.Y}");
-                    AddDebugMenuEntry($"Viewport TilesHorizonzaly:{ScreenTilesHor} TilesVerticaly:{ScreenTilesVer}{mtString} TileSizeInPixels:{world.TileSize}");
-                    AddDebugMenuEntry($"Screen Width:{ScreenWidth} Height:{ScreenHeight} GameGraphicsScale:{GameGraphicsScale}");
-                    AddDebugMenuEntry($"Cursor WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
+                    AddDebugMenuEntry($"Position - X:{player.X} Y:{player.Y}");
+                    AddDebugMenuEntry($"Viewport - TilesHorizonzaly:{ScreenTilesHor} TilesVerticaly:{ScreenTilesVer}{mtString} TileSizeInPixels:{world.TileSize}");
+                    AddDebugMenuEntry($"Screen - Width:{ScreenWidth} Height:{ScreenHeight} GameGraphicsScale:{GameGraphicsScale}");
+                    AddDebugMenuEntry($"Cursor - WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
+                    AddDebugMenuEntry($"Health:{player.Health} Hunger:{player.Hunger} Saturation:{player.Saturation}");
+                    AddDebugMenuEntry($"World - Width:{world.Width} Height:{world.Height}");
+                    AddDebugMenuEntry($"ClearingEntityTileBlocksColumns:{world.ClearingEntityTileBlocksColumns}");
                 }
 
                 Raylib.EndDrawing();
@@ -142,14 +143,14 @@ namespace trosecnik.src
             {
                 case AppMode.Playing:
                     {
-                        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                        if (Raylib.IsMouseButtonPressed(MouseButton.Right) && player.movementMode == Player.MovementMode.Pathfind)
                         {
                             player.PlayerPathfinder.SetStart(player.X, player.Y);
                             player.PlayerPathfinder.SetTarget((int) mouseWorldPosition.X, (int) mouseWorldPosition.Y);
                             player.PlayerPathfinder.Recalculate();
                         }
 
-                        if (Raylib.IsMouseButtonPressed(MouseButton.Right))
+                        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
                         {
                             WorldSpace.Entities.SimpleEntity simpleEntity = new();
 
@@ -167,7 +168,10 @@ namespace trosecnik.src
                     break;
                 case AppMode.YouDiedMenu:
                     {
-                        
+                        if (Raylib.IsKeyPressed(KeyboardKey.Space))
+                        {
+                            ShouldExit = true;
+                        }
                     }
                     break;
             }
@@ -199,6 +203,7 @@ namespace trosecnik.src
             // HUD
 
             hud.Health = player.Health;
+            hud.Hunger = player.Hunger;
             hud.Draw();
         }
 
@@ -209,6 +214,7 @@ namespace trosecnik.src
                 case AppMode.Playing:
                     {
                         DrawScenePlaying(mouseWorldPosition);
+                        player.PlayerInventory.Draw();
                     }
                     break;
                 case AppMode.YouDiedMenu:

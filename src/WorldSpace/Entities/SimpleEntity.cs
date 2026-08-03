@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace trosecnik.src.WorldSpace.Entities
 {
     public class SimpleEntity : SimpleEntityBase
@@ -19,27 +21,31 @@ namespace trosecnik.src.WorldSpace.Entities
                 pathfinder.Recalculate();
             }
 
-            if (player.X != pathfinder.GetTargetX() || player.Y != pathfinder.GetTargetY())
-            {
-                pathfinder.SetStart((int) Position.X, (int) Position.Y);
-                pathfinder.SetTarget(player.X, player.Y);
-                pathfinder.Recalculate();
-            }
-
             if (tick % 20 == 0)
             {
+                if (player.X != pathfinder.GetTargetX() || player.Y != pathfinder.GetTargetY() || pathfinder.Finished)
+                {
+                    pathfinder.SetStart((int) Position.X, (int) Position.Y);
+                    pathfinder.SetTarget(player.X, player.Y);
+                    pathfinder.Recalculate();
+                }
+
                 (int X, int Y)? pos = pathfinder.GetNextStep();
 
                 if (pos != null)
                 {
+                    Vector2 PrevPos = Position;
                     Position.X = pos.Value.X;
                     Position.Y = pos.Value.Y;
-                }
-                else
-                {
-                    player.Health -= 5;
+                    if (Position.X == player.X && Position.Y == player.Y)
+                    {
+                        Position = PrevPos;
+                        player.Health -= 2;
+                    }
                 }
             }
+
+            world.EntityBlockTile((int) Position.X, (int) Position.Y);
         }
     }
 }

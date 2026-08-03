@@ -145,10 +145,10 @@ namespace trosecnik.src
             if (!IsInsideWorld(StartX, StartY) || !IsInsideWorld(TargetX, TargetY))
                 return;
 
-            if (allowedTiles == AllowedTiles.Walkable && !World.GetTile(StartX, StartY).GetWalkable())
+            if (allowedTiles == AllowedTiles.Walkable && !World.GetWalkable(StartX, StartY))
                 return;
 
-            if (allowedTiles == AllowedTiles.Walkable && !World.GetTile(TargetX, TargetY).GetWalkable())
+            if (allowedTiles == AllowedTiles.Walkable && !World.GetWalkable(TargetX, TargetY))
                 return;
 
             if (Math.Abs(TargetX - StartX) > MaxRangeFromStart || Math.Abs(TargetY - StartY) > MaxRangeFromStart)
@@ -202,7 +202,7 @@ namespace trosecnik.src
                     if (nx < minX || nx > maxX || ny < minY || ny > maxY)
                         continue;
 
-                    if (allowedTiles == AllowedTiles.Walkable && !World.GetTile(nx, ny).GetWalkable())
+                    if (allowedTiles == AllowedTiles.Walkable && !World.GetWalkable(nx, ny))
                         continue;
 
                     int neighborIndex = ToIndex(nx, ny);

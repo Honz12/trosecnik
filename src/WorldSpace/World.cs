@@ -28,9 +28,13 @@ namespace trosecnik.src.WorldSpace
         public static Tiles.VoidTile voidTile = new();
 
         private readonly ITile[,] tiles;
+        private bool[,] entityTileBlocks;
+        private bool[] entityTileBlocksColumnChanged;
         private readonly List<IEntity> entities;
         public int Width;
         public int Height;
+
+        public int ClearingEntityTileBlocksColumns = 0;
 
         public int TileSize = 16;
 
@@ -40,6 +44,8 @@ namespace trosecnik.src.WorldSpace
             Height = height;
 
             tiles = new ITile[width, height];
+            entityTileBlocks = new bool[width, height];
+            entityTileBlocksColumnChanged = new bool[width];
             entities = [];
 
             GenerateWorld(seed);
@@ -148,6 +154,24 @@ namespace trosecnik.src.WorldSpace
 
         public void UpdateEntites(Player player, ulong tick)
         {
+            // Clear entity block buffer
+            {
+                ClearingEntityTileBlocksColumns = 0;
+                for (int x = 0; x < Width; x++)
+                {
+                    if (!entityTileBlocksColumnChanged[x])
+                    {
+                        continue;
+                    }
+                    entityTileBlocksColumnChanged[x] = false;
+                    ClearingEntityTileBlocksColumns++;
+                    for (int y = 0; y < Height; y++)
+                    {
+                        entityTileBlocks[x, y] = false;
+                    }
+                }
+            }
+
             for (int i = 0; i < entities.Count; i++)
             {
                 var entity = entities[i];
@@ -161,6 +185,39 @@ namespace trosecnik.src.WorldSpace
                     i--;
                 }
             }
+        }
+
+        public void EntityBlockTile(int x, int y)
+        {
+            if (0 <= x && x < Width)
+            {
+                if (0 <= y && y < Height)
+                {
+                    entityTileBlocks[x, y] = true;
+                    entityTileBlocksColumnChanged[x] = true;
+                }
+            }
+        }
+
+        public bool IsTileEntityBlocked(int x, int y)
+        {
+            if (0 <= x && x < Width)
+            {
+                if (0 <= y && y < Height)
+                {
+                    return entityTileBlocks[x, y];
+                }
+            }
+            return false;
+        }
+
+        public bool GetWalkable(int x, int y)
+        {
+            if (IsTileEntityBlocked(x, y)) return false;
+
+            ITile tile = GetTile(x, y);
+
+            return tile.GetWalkable();
         }
     }
 }

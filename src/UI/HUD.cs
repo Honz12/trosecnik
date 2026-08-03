@@ -25,7 +25,7 @@ namespace trosecnik.src.UI
             Raylib.DrawRectangle((int)position.X, (int)position.Y, labelWidth * Program.GameGraphicsScale, (barHeight + 2) * Program.GameGraphicsScale, new Color(0, 0, 0, 160));
             Raylib.DrawText(label, (int)position.X + 4 * Program.GameGraphicsScale, (int)position.Y + 4 * Program.GameGraphicsScale, 10 * Program.GameGraphicsScale, Color.White);
 
-            int x = (int)position.X + (labelWidth + 6) * Program.GameGraphicsScale;
+            int x = (int)position.X + labelWidth * Program.GameGraphicsScale;
             Raylib.DrawRectangle(x, (int)position.Y, (barWidth + 2) * Program.GameGraphicsScale, (barHeight + 2) * Program.GameGraphicsScale, Color.Black);
             Raylib.DrawRectangle(x + Program.GameGraphicsScale, (int)position.Y + Program.GameGraphicsScale, barWidth * Program.GameGraphicsScale, barHeight * Program.GameGraphicsScale, new Color(40, 40, 40, 255));
 
@@ -35,7 +35,7 @@ namespace trosecnik.src.UI
                 Raylib.DrawRectangle(x + Program.GameGraphicsScale, (int)position.Y + Program.GameGraphicsScale, (int)(barWidth * ratio) * Program.GameGraphicsScale, barHeight * Program.GameGraphicsScale, color);
             }
 
-            Raylib.DrawText($"{Math.Max(0, (int)value)}%", x + (barWidth + 8) * Program.GameGraphicsScale, (int)position.Y + 4 * Program.GameGraphicsScale, 10 * Program.GameGraphicsScale, Color.White);
+            Raylib.DrawText($"{Math.Max(0, (int)value)}%", x + 4 * Program.GameGraphicsScale, (int)position.Y + 4 * Program.GameGraphicsScale, 10 * Program.GameGraphicsScale, Color.Black);
         }
     }
 }

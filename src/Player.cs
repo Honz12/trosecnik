@@ -1,37 +1,105 @@
 using Raylib_cs;
 using System.Numerics;
+using trosecnik.src.InventorySpace;
 using trosecnik.src.WorldSpace;
 
 namespace trosecnik.src
 {
-    public class Player(World world)
+    public class Player(int x, int y, World world)
     {
-        public int X = 0;
-        public int Y = 0;
+        private const int MOVE_WAIT = 10;
+
+        public enum MovementMode
+        {
+            Pathfind, WASD
+        }
+
+        public int X = x;
+        public int Y = y;
+        public Vector2 PrevPosition = new(x, y);
         public int Health = 100;
         private byte direction = 0;
         public Pathfinder PlayerPathfinder = new(world);
+        public Inventory PlayerInventory = new();
+        public double Saturation = 100.0;
+        public int Hunger = 100;
+
+        private int moveWaiter = 0;
+
+        public MovementMode movementMode = MovementMode.WASD;
 
         public void Update(ulong tick)
         {
-            if (tick % 5 == 0)
+            Saturation -= 0.01;
+            
+            if (movementMode == MovementMode.Pathfind)
             {
-                if (!PlayerPathfinder.Finished)
+                if (tick % 5 == 0)
                 {
-                    (int X, int Y)? pos = PlayerPathfinder.GetNextStep();
-
-                    if (pos != null)
+                    if (!PlayerPathfinder.Finished)
                     {
-                        X = pos.Value.X;
-                        Y = pos.Value.Y;
+                        PlayerPathfinder.SetStart(X, Y);
+                        PlayerPathfinder.Recalculate();
+
+                        (int X, int Y)? pos = PlayerPathfinder.GetNextStep();
+
+                        if (pos != null)
+                        {
+                            X = pos.Value.X;
+                            Y = pos.Value.Y;
+                            Saturation -= 1.0;
+                        }
                     }
                 }
+            }
+            else if (movementMode == MovementMode.WASD)
+            {
+                int moveX = 0;
+                int moveY = 0;
+                if (moveWaiter <= 0)
+                {
+                    if (Raylib.IsKeyDown(KeyboardKey.W))
+                    {
+                        moveY--;
+                        moveWaiter = MOVE_WAIT;
+                    }
+                    if (Raylib.IsKeyDown(KeyboardKey.S))
+                    {
+                        moveY++;
+                        moveWaiter = MOVE_WAIT;
+                    }
+                    if (Raylib.IsKeyDown(KeyboardKey.A))
+                    {
+                        moveX--;
+                        moveWaiter = MOVE_WAIT;
+                    }
+                    if (Raylib.IsKeyDown(KeyboardKey.D))
+                    {
+                        moveX++;
+                        moveWaiter = MOVE_WAIT;
+                    }
+
+                    if (world.GetWalkable(X + moveX, Y + moveY))
+                    {
+                        X += moveX;
+                        Y += moveY;
+                    }
+                }
+                moveWaiter--;
             }
 
             if (Health <= 0)
             {
                 Program.appMode = Program.AppMode.YouDiedMenu;
             }
+
+            if (Saturation <= 0)
+            {
+                Saturation += 100.0;
+                Hunger--;
+            }
+
+            PlayerInventory.Update();
         }
 
         public void Draw(int tileSize, Camera camera)
