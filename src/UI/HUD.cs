@@ -18,7 +18,7 @@ namespace trosecnik.src.UI
         {
             DrawBar(TransalationServer.GetTransalated("hudBarHealth"), Health, 0, Color.Red);
             DrawBar(TransalationServer.GetTransalated("hudBarHunger"), Hunger, 1, Color.Orange);
-            DrawBar(TransalationServer.GetTransalated("hudBarThirst"), Water, 1, Color.Blue);
+            DrawBar(TransalationServer.GetTransalated("hudBarThirst"), Water, 2, Color.Blue);
         }
 
         private static void DrawBar(string label, float value, int idx, Color color)
