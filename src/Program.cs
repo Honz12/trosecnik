@@ -7,6 +7,11 @@ namespace trosecnik.src
 {
     public static class Program
     {
+        public enum AppMode
+        {
+            Playing, YouDiedMenu
+        }
+
         public const int BASE_TILE_SIZE = 16;
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
@@ -39,6 +44,8 @@ namespace trosecnik.src
         private static bool miniTiles = false;
         private static bool DebugShown = false;
 
+        public static AppMode appMode = AppMode.Playing;
+
         public static void AddDebugMenuEntry(string entry)
         {
             int fontSize = 10 * GameGraphicsScale;
@@ -56,7 +63,7 @@ namespace trosecnik.src
 
         public static void Main()
         {
-            Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow | ConfigFlags.FullscreenMode);
+            Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow);
 
             Raylib.InitWindow(ScreenWidth, ScreenHeight, $"Trosečník {VER_STRING}");
 
@@ -81,7 +88,7 @@ namespace trosecnik.src
                 // --- UPDATE LOGIC ---
 
                 Vector2 mousePosition = Raylib.GetMousePosition();
-                Vector2 mouseWorldPosition = new((float) (Math.Round((mousePosition.X - ScreenCenterX) / world.TileSize) + camera.X), (float) (Math.Round((mousePosition.Y - ScreenCenterY) / world.TileSize) + camera.Y));
+                Vector2 mouseWorldPosition = new((int) Math.Floor((mousePosition.X - ScreenCenterX) / (double) world.TileSize + camera.X + 0.5), (int) Math.Floor((mousePosition.Y - ScreenCenterY) / (double) world.TileSize + camera.Y + 0.5));
 
                 if (Raylib.IsKeyPressed(KeyboardKey.F11))
                 {
@@ -98,45 +105,15 @@ namespace trosecnik.src
                     DebugShown = !DebugShown;
                 }
 
-                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-                {
-                    player.PlayerPathfinder.SetStart(player.X, player.Y);
-                    player.PlayerPathfinder.SetTarget((int) mouseWorldPosition.X, (int) mouseWorldPosition.Y);
-                    player.PlayerPathfinder.Recalculate();
-                }
+                AppUpdate(mouseWorldPosition);
 
-                player.Update(Tick);
-                //camera.Update();
-                camera.X += (player.X - camera.X) * 0.1;
-                camera.Y += (player.Y - camera.Y) * 0.1;
-
-                // --- DRAW LOGIC HERE ---
                 debugMenuEntries = 0;
 
+                // Render
+
                 Raylib.BeginDrawing();
-                
-                Raylib.ClearBackground(Color.Black);
 
-                world.Draw((int) camera.X, (int) camera.Y, Tick, camera.X % 1, camera.Y % 1);
-
-                player.Draw(world.TileSize, camera);
-
-                for (int ox = -2; ox <= 2; ox++)
-                {
-                    for (int oy = -2; oy <= 2; oy++)
-                    {
-                        Raylib.DrawRectangleLinesEx(
-                            new Rectangle(
-                                (int) ((mouseWorldPosition.X - camera.X + ox) * world.TileSize) + ScreenCenterX - world.TileSize / 2,
-                                (int) ((mouseWorldPosition.Y - camera.Y + oy) * world.TileSize) + ScreenCenterY - world.TileSize / 2,
-                                world.TileSize, world.TileSize
-                            ),
-                            GameGraphicsScale,
-                            (ox == 0 && oy == 0) ? new Color(255, 255, 255, 128) : ((Math.Abs(ox) == 2 || Math.Abs(oy) == 2) ? new Color(255, 255, 255, 16) : new Color(255, 255, 255, 64)));
-                    }
-                }
-
-                hud.Draw();
+                AppRender(mouseWorldPosition);
 
                 // Debug
 
@@ -145,12 +122,10 @@ namespace trosecnik.src
                     AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
                     string mtString = miniTiles ? " [MT]" : "";
 
-                    AddDebugMenuEntry($"<PLAYER> X:{player.X} Y:{player.Y}");
-                    AddDebugMenuEntry($"<WORLD> W:{world.Width} H:{world.Height}");
-                    AddDebugMenuEntry($"<VIEWPORT> TW:{ScreenTilesHor} TH:{ScreenTilesVer}{mtString}");
-                    AddDebugMenuEntry($"<SCREEN> W:{ScreenWidth} H:{ScreenHeight} GGS:{GameGraphicsScale}");
-                    AddDebugMenuEntry($"<TILE> S-PX:{world.TileSize}");
-                    AddDebugMenuEntry($"<MOUSE> X:{mouseWorldPosition.X} Y:{mouseWorldPosition.Y}");
+                    AddDebugMenuEntry($"Position X:{player.X} Y:{player.Y}");
+                    AddDebugMenuEntry($"Viewport TilesHorizonzaly:{ScreenTilesHor} TilesVerticaly:{ScreenTilesVer}{mtString} TileSizeInPixels:{world.TileSize}");
+                    AddDebugMenuEntry($"Screen Width:{ScreenWidth} Height:{ScreenHeight} GameGraphicsScale:{GameGraphicsScale}");
+                    AddDebugMenuEntry($"Cursor WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
                 }
 
                 Raylib.EndDrawing();
@@ -159,6 +134,97 @@ namespace trosecnik.src
             }
 
             Raylib.CloseWindow();
+        }
+
+        private static void AppUpdate(Vector2 mouseWorldPosition)
+        {
+            switch (appMode)
+            {
+                case AppMode.Playing:
+                    {
+                        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                        {
+                            player.PlayerPathfinder.SetStart(player.X, player.Y);
+                            player.PlayerPathfinder.SetTarget((int) mouseWorldPosition.X, (int) mouseWorldPosition.Y);
+                            player.PlayerPathfinder.Recalculate();
+                        }
+
+                        if (Raylib.IsMouseButtonPressed(MouseButton.Right))
+                        {
+                            WorldSpace.Entities.SimpleEntity simpleEntity = new();
+
+                            simpleEntity.SetPos(new(mouseWorldPosition.X, mouseWorldPosition.Y));
+
+                            world.AddEntity(simpleEntity);
+                        }
+
+                        player.Update(Tick);
+                        camera.X += (player.X - camera.X) * 0.1;
+                        camera.Y += (player.Y - camera.Y) * 0.1;
+
+                        world.UpdateEntites(player, Tick);
+                    }
+                    break;
+                case AppMode.YouDiedMenu:
+                    {
+                        
+                    }
+                    break;
+            }
+        }
+
+        private static void DrawScenePlaying(Vector2 mouseWorldPosition)
+        {
+            Raylib.ClearBackground(Color.Black);
+
+            world.Draw(camera, Tick);
+
+            player.Draw(world.TileSize, camera);
+
+            for (int ox = -2; ox <= 2; ox++)
+            {
+                for (int oy = -2; oy <= 2; oy++)
+                {
+                    Raylib.DrawRectangleLinesEx(
+                        new Rectangle(
+                            (float) ((mouseWorldPosition.X - camera.X + ox) * world.TileSize) + ScreenCenterX - world.TileSize / 2,
+                            (float) ((mouseWorldPosition.Y - camera.Y + oy) * world.TileSize) + ScreenCenterY - world.TileSize / 2,
+                            world.TileSize, world.TileSize
+                        ),
+                        GameGraphicsScale,
+                        (ox == 0 && oy == 0) ? new Color(255, 255, 255, 128) : ((Math.Abs(ox) == 2 || Math.Abs(oy) == 2) ? new Color(255, 255, 255, 16) : new Color(255, 255, 255, 64)));
+                }
+            }
+
+            // HUD
+
+            hud.Health = player.Health;
+            hud.Draw();
+        }
+
+        private static void AppRender(Vector2 mouseWorldPosition)
+        {
+            switch (appMode)
+            {
+                case AppMode.Playing:
+                    {
+                        DrawScenePlaying(mouseWorldPosition);
+                    }
+                    break;
+                case AppMode.YouDiedMenu:
+                    {
+                        DrawScenePlaying(mouseWorldPosition);
+
+                        Raylib.DrawRectangle(0, 0, ScreenWidth, ScreenHeight, new Color(0, 0, 0, 256 - 64));
+                        
+                        const string text1 = "Umrel jsi";
+                        const string text2 = "Mezerník pro ukoncení hry";
+
+                        Raylib.DrawText(text1, ScreenCenterX - Raylib.MeasureText(text1, 20 * GameGraphicsScale) / 2, ScreenCenterY - 20 - 5 * GameGraphicsScale, 20 * GameGraphicsScale, Color.Red);
+                        Raylib.DrawText(text2, ScreenCenterX - Raylib.MeasureText(text2, 20 * GameGraphicsScale) / 2, ScreenCenterY + 20 - 5 * GameGraphicsScale, 20 * GameGraphicsScale, Color.Red);
+                    }
+                    break;
+            }
         }
     }
 }

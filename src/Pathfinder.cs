@@ -220,5 +220,15 @@ namespace trosecnik.src
                 }
             }
         }
+
+        public int GetTargetX()
+        {
+            return TargetX;
+        }
+
+        public int GetTargetY()
+        {
+            return TargetY;
+        }
     }
 }

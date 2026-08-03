@@ -27,7 +27,8 @@ namespace trosecnik.src.WorldSpace
     {
         public static Tiles.VoidTile voidTile = new();
 
-        ITile[,] tiles;
+        private readonly ITile[,] tiles;
+        private readonly List<IEntity> entities;
         public int Width;
         public int Height;
 
@@ -39,15 +40,21 @@ namespace trosecnik.src.WorldSpace
             Height = height;
 
             tiles = new ITile[width, height];
+            entities = [];
 
             GenerateWorld(seed);
         }
 
-        public void Draw(int offsetX, int offsetY, ulong tick, double offsetLittleX, double offsetLittleY)
+        public void Draw(Camera camera, ulong tick)
         {
-            for(int rx = -Program.ScreenTilesHor / 2; rx < Program.ScreenTilesHor / 2 + 2; rx++)
+            int offsetX = (int) camera.X;
+            int offsetY = (int) camera.Y;
+            double offsetLittleX = camera.X % 1;
+            double offsetLittleY = camera.Y % 1;
+
+            for(int rx = -Program.ScreenTilesHor / 2 - 8; rx < Program.ScreenTilesHor / 2 + 8; rx++)
             {
-                for (int ry = -Program.ScreenTilesVer / 2; ry < Program.ScreenTilesVer / 2 + 2; ry++)
+                for (int ry = -Program.ScreenTilesVer / 2 - 8; ry < Program.ScreenTilesVer / 2 + 8; ry++)
                 {
                     int x = rx + offsetX;
                     int y = ry + offsetY;
@@ -63,6 +70,10 @@ namespace trosecnik.src.WorldSpace
                     TileRenderer.DrawTile(tileId, position, TileSize);
                 }
             }
+            foreach (var entity in entities)
+            {
+                DrawEntity(entity, camera, tick);
+            }
         }
 
         public ITile GetTile(int x, int y)
@@ -70,6 +81,15 @@ namespace trosecnik.src.WorldSpace
             if (x < 0 || x >= Width || y < 0 || y >= Height)
                 return voidTile;
             return tiles[x, y];
+        }
+
+        public void DrawEntity(IEntity entity, Camera camera, ulong tick)
+        {
+            Texture2D texture = TextureManager.GetTexture(entity.GetTexture(tick));
+            Rectangle sourceRec = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle destRec = new Rectangle((int) ((entity.GetPosition(tick).X - camera.X) * TileSize) + Program.ScreenCenterX - TileSize / 2, (int) ((entity.GetPosition(tick).Y - camera.Y) * TileSize) + Program.ScreenCenterY - TileSize / 2, TileSize, TileSize);
+            Vector2 origin = Vector2.Zero;
+            Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, Color.White);
         }
 
         private void GenerateWorld(int seed)
@@ -117,6 +137,28 @@ namespace trosecnik.src.WorldSpace
                     {
                         tiles[x, y] = new Tiles.DeepWaterTile();
                     }
+                }
+            }
+        }
+
+        public void AddEntity(IEntity entity)
+        {
+            entities.Add(entity);
+        }
+
+        public void UpdateEntites(Player player, ulong tick)
+        {
+            for (int i = 0; i < entities.Count; i++)
+            {
+                var entity = entities[i];
+
+                entity.Update(player, this, tick);
+                IEntity.EntityRequest entityRequest = entity.GetRequest();
+
+                if (entityRequest == IEntity.EntityRequest.SelfDelete)
+                {
+                    entities.RemoveAt(i);
+                    i--;
                 }
             }
         }
