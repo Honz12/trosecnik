@@ -4,7 +4,7 @@ namespace trosecnik.src.WorldSpace
 {
     public interface ITile
     {
-        public Vector2 GetTextureAltlasCoords(ulong tick);
+        public Vector2 GetTextureAltlasCoords(Vector2 position, ulong tick);
         public bool GetWalkable();
     }
 }

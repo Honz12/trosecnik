@@ -7,6 +7,14 @@ namespace trosecnik.src.UI
 {
     public class CraftingUI
     {
+        public enum WorkstationPrivilige
+        {
+            HandCrafting,
+            Workbench,
+            Furnace,
+            Anvil,
+        }
+
         private Player player;
 
         private Dictionary<string, int> items = new();

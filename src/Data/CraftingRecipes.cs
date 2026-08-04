@@ -23,11 +23,11 @@ namespace trosecnik.src.Data
         private static readonly Recipe[] recipes = [
             new(
                 [new("woodenLog", 2)],
-                new("woodenBridge", 1)
+                new("woodenBridge", 2)
             ),
             new(
-                [new("treeSapling", 2)],
-                new("redBerries", 1)
+                [new("woodenLog", 4)],
+                new("woodenWall", 2)
             ),
         ];
     }

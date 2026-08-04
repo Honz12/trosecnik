@@ -166,7 +166,7 @@ namespace trosecnik.src
             Vector2 origin = Vector2.Zero;
             Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, Color.White);
 
-            if (!PlayerPathfinder.Finished)
+            if (!PlayerPathfinder.Finished && movementMode == MovementMode.Pathfind)
             {
                 texture = TextureManager.GetTexture($"player/player_0005.png");
                 sourceRec = new Rectangle(0, 0, texture.Width, texture.Height);

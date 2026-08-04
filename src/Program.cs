@@ -1,5 +1,6 @@
 using System.Numerics;
 using Raylib_cs;
+using trosecnik.src.InventorySpace;
 using trosecnik.src.UI;
 using trosecnik.src.WorldSpace;
 
@@ -28,13 +29,9 @@ namespace trosecnik.src
         public static int ScreenCenterY = ScreenHeight / 2;
         public static int GameGraphicsScale = 1;
 
-        public static World world = new(512, 512, 0);
-        public static Player player = new(world.Width / 2, world.Height / 2, world);
-        public static Camera camera = new()
-        {
-            X = player.X,
-            Y = player.Y,
-        };
+        public static World world = new(1, 1, 0);
+        public static Player player = new(0, 0, world);
+        public static Camera camera = new();
         public static HUD hud = new();
         public static CraftingUI craftingUI = new(player);
 
@@ -66,6 +63,47 @@ namespace trosecnik.src
 
         public static void Main()
         {
+            Console.WriteLine("ENTER SEED");
+            bool success = int.TryParse(Console.ReadLine(), out int seed);
+            if (!success)
+            {
+                seed = new Random().Next();
+            }
+            Console.WriteLine("WORLD SIZE");
+            success = int.TryParse(Console.ReadLine(), out int worldSize);
+            if (!success)
+            {
+                worldSize = 512;
+            }
+            world = new(worldSize, worldSize, seed);
+            List<Vector2> allowedSpawnPoints = [];
+            for (int x = 0; x < world.Width; x++)
+            {
+                for (int y = 0; y < world.Height; y++)
+                {
+                    if (world.GetWalkable(x, y)) allowedSpawnPoints.Add(new Vector2(x, y));
+                }
+            }
+            Vector2 worldCenter = new(world.Width / 2, world.Height / 2);
+            float maxDistance = float.MaxValue;
+            player = new(0, 0, world);
+            foreach (Vector2 pos in allowedSpawnPoints)
+            {
+                float dist = (pos - worldCenter).LengthSquared();
+                if (dist < maxDistance)
+                {
+                    maxDistance = dist;
+                    player.X = (int) pos.X;
+                    player.Y = (int) pos.Y;
+                }
+            }
+            camera = new()
+            {
+                X = player.X,
+                Y = player.Y,
+            };
+            craftingUI = new(player);
+
             Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow | ConfigFlags.FullscreenMode);
 
             Raylib.InitWindow(ScreenWidth, ScreenHeight, $"{TransalationServer.GetTransalated("gameName")} {VER_STRING}");
@@ -125,9 +163,13 @@ namespace trosecnik.src
                     }
                 }
 
-                if (Raylib.IsKeyPressed(KeyboardKey.F2))
+                if (Raylib.IsKeyDown(KeyboardKey.F2) || Raylib.IsMouseButtonDown(MouseButton.Side))
                 {
-                    miniTiles = !miniTiles;
+                    miniTiles = true;
+                }
+                else
+                {
+                    miniTiles = false;
                 }
 
                 if (Raylib.IsKeyPressed(KeyboardKey.F3))
@@ -301,6 +343,15 @@ namespace trosecnik.src
                     }
                     break;
             }
+        }
+
+        public static void DropItem(Vector2 position, IItem item)
+        {
+            WorldSpace.Entities.ItemDropEntity itemDrop = new(item);
+
+            itemDrop.SetPos(position);
+
+            world.AddEntity(itemDrop);
         }
     }
 }

@@ -80,17 +80,10 @@ namespace trosecnik.src.WorldSpace.Entities
 
         public void Sapling_Break(bool offset = false)
         {
-            ItemDropEntity sapling = new(new InventorySpace.Items.TreeSaplingItem());
-
-            if (offset)
-                sapling.SetPos(new (
-                    (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                    (int) (Position.Y + (Rng.Next(2) * 2 - 1))
-                ));
-            else
-                sapling.SetPos(Position);
-
-            Program.world.AddEntity(sapling);
+            Program.DropItem(
+                Position,
+                new InventorySpace.Items.TreeSaplingItem()
+            );
             Grown = true;
             Program.world.interactableEntities.Remove(Position);
         }

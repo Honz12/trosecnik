@@ -4,7 +4,7 @@ namespace trosecnik.src.WorldSpace.Tiles
 {
     public class WaterTile : ITile
     {
-        public Vector2 GetTextureAltlasCoords(ulong tick)
+        public Vector2 GetTextureAltlasCoords(Vector2 position, ulong tick)
         {
             return new(tick / 10 % 8, 1);
         }

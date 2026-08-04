@@ -77,10 +77,10 @@ namespace trosecnik.src.WorldSpace
 
                     Vector2 position = new((float) ((rx - offsetLittleX) * TileSize), (float) ((ry - offsetLittleY) * TileSize));
 
-                    TileRenderer.DrawTile(position, TileSize, tileL1.GetTextureAltlasCoords(tick));
+                    TileRenderer.DrawTile(position, TileSize, tileL1.GetTextureAltlasCoords(new(x, y), tick));
                     if (tileL2 != null)
                     {
-                        TileRenderer.DrawTile(position, TileSize, tileL2.GetTextureAltlasCoords(tick));
+                        TileRenderer.DrawTile(position, TileSize, tileL2.GetTextureAltlasCoords(new(x, y), tick));
                     }
                 }
             }

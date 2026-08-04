@@ -66,47 +66,43 @@ namespace trosecnik.src.WorldSpace.Entities
 
             if (final)
             {
-                ItemDropEntity log = new(new WoodenLogItem());
+                Program.DropItem(
+                    new (
+                        (int) (Position.X + (Rng.Next(2) * 2 - 1)),
+                        (int) (Position.Y + (Rng.Next(2) * 2 - 1))
+                    ), 
+                    new WoodenLogItem()
+                );
 
-                log.SetPos(new (
-                    (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                    (int) (Position.Y + (Rng.Next(2) * 2 - 1))
-                ));
-
-                Program.world.AddEntity(log);
-
-                ItemDropEntity sapling = new(new TreeSaplingItem());
-
-                sapling.SetPos(new (
-                    (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                    (int) (Position.Y + (Rng.Next(2) * 2 - 1))
-                ));
-
-                Program.world.AddEntity(sapling);
+                Program.DropItem(
+                    new (
+                        (int) (Position.X + (Rng.Next(2) * 2 - 1)),
+                        (int) (Position.Y + (Rng.Next(2) * 2 - 1))
+                    ),
+                    new TreeSaplingItem()
+                );
             }
             else
             {
                 if (Rng.Next(5) == 0)
                 {
-                    ItemDropEntity sapling = new(new TreeSaplingItem());
-
-                    sapling.SetPos(new (
-                        (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                        (int) (Position.Y + (Rng.Next(2) * 2 - 1))
-                    ));
-
-                    Program.world.AddEntity(sapling);
+                    Program.DropItem(
+                        new (
+                            (int) (Position.X + (Rng.Next(2) * 2 - 1)),
+                            (int) (Position.Y + (Rng.Next(2) * 2 - 1))
+                        ),
+                        new TreeSaplingItem()
+                    );
                 }
                 else
                 {
-                    ItemDropEntity log = new(new WoodenLogItem());
-
-                    log.SetPos(new (
-                        (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                        (int) (Position.Y + (Rng.Next(2) * 2 - 1))
-                    ));
-                
-                    Program.world.AddEntity(log);
+                    Program.DropItem(
+                        new (
+                            (int) (Position.X + (Rng.Next(2) * 2 - 1)),
+                            (int) (Position.Y + (Rng.Next(2) * 2 - 1))
+                        ), 
+                        new WoodenLogItem()
+                    );
                 }
             }
         }
