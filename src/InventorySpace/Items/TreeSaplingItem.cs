@@ -20,11 +20,6 @@ namespace trosecnik.src.InventorySpace.Items
             return IItem.ItemType.Placeable;
         }
 
-        public string GetTexture()
-        {
-            return "items/item_0007.png";
-        }
-
         public void PlaceItem(Vector2 position, int idx)
         {
             if (Program.world.interactableEntities.ContainsKey(position)) return;

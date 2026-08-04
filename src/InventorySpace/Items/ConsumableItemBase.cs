@@ -17,8 +17,6 @@ namespace trosecnik.src.InventorySpace.Items
             return IItem.ItemType.Consumable;
         }
 
-        public abstract string GetTexture();
-
         public void PlaceItem(Vector2 position, int idx)
         {
             throw new NotImplementedException();

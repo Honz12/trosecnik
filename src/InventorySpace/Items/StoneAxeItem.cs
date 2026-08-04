@@ -22,11 +22,6 @@ namespace trosecnik.src.InventorySpace.Items
             return IItem.ItemType.Placeable;
         }
 
-        public string GetTexture()
-        {
-            return "items/item_0004.png";
-        }
-
         public void PlaceItem(Vector2 position, int idx)
         {
             if (Program.world.interactableEntities.TryGetValue(position, out IEntity? entity))

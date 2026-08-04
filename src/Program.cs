@@ -9,7 +9,7 @@ namespace trosecnik.src
     {
         public enum AppMode
         {
-            Playing, YouDiedMenu
+            Playing, Crafting, YouDiedMenu
         }
 
         public const int BASE_TILE_SIZE = 16;
@@ -36,6 +36,7 @@ namespace trosecnik.src
             Y = player.Y,
         };
         public static HUD hud = new();
+        public static CraftingUI craftingUI = new(player);
 
         public static ulong Tick;
         private static int debugMenuEntries = 0;
@@ -186,12 +187,27 @@ namespace trosecnik.src
                             player.PlayerPathfinder.SetTarget((int) mouseWorldPosition.X, (int) mouseWorldPosition.Y);
                             player.PlayerPathfinder.Recalculate();
                         }
+                        if (Raylib.IsKeyPressed(KeyboardKey.C))
+                        {
+                            craftingUI.Recalculate();
+                            appMode = AppMode.Crafting;
+                        }
 
                         player.Update(Tick, mouseWorldPosition, deltaTime);
                         camera.X += (player.X - camera.X) * 0.1;
                         camera.Y += (player.Y - camera.Y) * 0.1;
 
                         world.UpdateEntites(player, Tick, deltaTime);
+                    }
+                    break;
+                case AppMode.Crafting:
+                    {
+                        if (Raylib.IsKeyPressed(KeyboardKey.Escape) || Raylib.IsKeyPressed(KeyboardKey.C))
+                        {
+                            appMode = AppMode.Playing;
+                        }
+                        camera.X += (player.X - camera.X) * 0.1;
+                        camera.Y += (player.Y - camera.Y) * 0.1;
                     }
                     break;
                 case AppMode.YouDiedMenu:
@@ -228,6 +244,8 @@ namespace trosecnik.src
 
             // HUD
 
+            player.PlayerInventory.Draw();
+
             hud.Health = (int) ((double) player.Health * (100 / Player.MAX_HEALTH));
             hud.Hunger = (int) ((double) player.Hunger * (100 / Player.MAX_HUNGER));
             hud.Draw();
@@ -247,7 +265,12 @@ namespace trosecnik.src
                 case AppMode.Playing:
                     {
                         DrawScenePlaying(mouseWorldPosition);
-                        player.PlayerInventory.Draw();
+                    }
+                    break;
+                case AppMode.Crafting:
+                    {
+                        DrawScenePlaying(mouseWorldPosition);
+                        craftingUI.Draw();
                     }
                     break;
                 case AppMode.YouDiedMenu:

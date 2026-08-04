@@ -18,12 +18,6 @@ namespace trosecnik.src.InventorySpace.Items
         {
             return IItem.ItemType.NoInteraction;
         }
-
-        public string GetTexture()
-        {
-            return "items/item_0006.png";
-        }
-
         public void PlaceItem(Vector2 position, int idx)
         {
             throw new NotImplementedException();

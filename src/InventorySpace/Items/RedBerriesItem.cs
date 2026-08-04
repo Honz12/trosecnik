@@ -13,12 +13,7 @@ namespace trosecnik.src.InventorySpace.Items
 
         public override string GetConsumableItemId()
         {
-            return "woodenLog";
-        }
-
-        public override string GetTexture()
-        {
-            return "items/item_0003.png";
+            return "redBerries";
         }
     }
 }

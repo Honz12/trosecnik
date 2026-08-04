@@ -29,7 +29,7 @@ namespace trosecnik.src.WorldSpace.Entities
 
         public string GetTexture(ulong tick)
         {
-            return Item.GetTexture();
+            return ItemData.GetTexture(Item.GetItemId());
         }
 
         public string? GetTextureAbove(ulong tick)

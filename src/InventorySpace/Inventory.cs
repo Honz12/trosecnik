@@ -107,7 +107,7 @@ namespace trosecnik.src.InventorySpace
 
                 if (item != null)
                 {
-                    Texture2D itemTexture = TextureManager.GetTexture(item.GetTexture());
+                    Texture2D itemTexture = TextureManager.GetTexture(ItemData.GetTexture(item.GetItemId()));
 
                     Raylib.DrawTexturePro(
                         itemTexture,
@@ -218,6 +218,11 @@ namespace trosecnik.src.InventorySpace
                     }
                 }
             }
+        }
+
+        public List<IItem> GetItems()
+        {
+            return Items;
         }
     }
 }
