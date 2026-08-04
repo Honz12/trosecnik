@@ -241,7 +241,7 @@ namespace trosecnik.src.WorldSpace
             entities.Add(entity);
         }
 
-        public void UpdateEntites(Player player, ulong tick)
+        public void UpdateEntites(Player player, ulong tick, float deltaTime)
         {
             // Clear entity block buffer
             {
@@ -265,7 +265,7 @@ namespace trosecnik.src.WorldSpace
             {
                 var entity = entities[i];
 
-                entity.Update(player, this, tick);
+                entity.Update(player, this, tick, deltaTime);
                 IEntity.EntityRequest entityRequest = entity.GetRequest();
 
                 if (entityRequest == IEntity.EntityRequest.SelfDelete)

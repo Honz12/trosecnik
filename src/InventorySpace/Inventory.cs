@@ -34,7 +34,7 @@ namespace trosecnik.src.InventorySpace
             return true;
         }
 
-        public void DeleteItem(int idx)
+        public void RemoveItem(int idx)
         {
             Items.RemoveAt(idx);
         }
@@ -212,7 +212,7 @@ namespace trosecnik.src.InventorySpace
 
                         Program.world.AddEntity(itemDrop);
 
-                        player.PlayerInventory.DeleteItem(Selected);
+                        player.PlayerInventory.RemoveItem(Selected);
 
                         SoundManager.Play("player/dropItem/dropItem1.wav");
                     }

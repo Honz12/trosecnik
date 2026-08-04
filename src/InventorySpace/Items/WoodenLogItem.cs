@@ -6,7 +6,8 @@ namespace trosecnik.src.InventorySpace.Items
     {
         public void ConsumeItem(Player player, int idx)
         {
-            throw new NotImplementedException();
+            player.PlayerInventory.RemoveItem(idx);
+            player.PlayerInventory.AddItem(new WoodenBridgeItem());
         }
 
         public string GetItemId()
@@ -16,7 +17,7 @@ namespace trosecnik.src.InventorySpace.Items
 
         public IItem.ItemType GetItemType()
         {
-            return IItem.ItemType.NoInteraction;
+            return IItem.ItemType.Consumable;
         }
 
         public string GetTexture()

@@ -191,7 +191,7 @@ namespace trosecnik.src
                         camera.X += (player.X - camera.X) * 0.1;
                         camera.Y += (player.Y - camera.Y) * 0.1;
 
-                        world.UpdateEntites(player, Tick);
+                        world.UpdateEntites(player, Tick, deltaTime);
                     }
                     break;
                 case AppMode.YouDiedMenu:

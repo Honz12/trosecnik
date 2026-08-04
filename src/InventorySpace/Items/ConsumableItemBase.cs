@@ -7,7 +7,7 @@ namespace trosecnik.src.InventorySpace.Items
         public void ConsumeItem(Player player, int idx)
         {
             ConsumeAction(player);
-            player.PlayerInventory.DeleteItem(idx);
+            player.PlayerInventory.RemoveItem(idx);
         }
         public abstract void ConsumeAction(Player player);
         public abstract string GetConsumableItemId();

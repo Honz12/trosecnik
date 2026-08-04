@@ -34,7 +34,7 @@ namespace trosecnik.src.InventorySpace.Items
             {
                 if (Program.world.SetTileLayer2(new WorldSpace.Tiles.WoodenBridgeTile(), (int) position.X, (int) position.Y))
                 {
-                    Program.player.PlayerInventory.DeleteItem(idx);
+                    Program.player.PlayerInventory.RemoveItem(idx);
                 }
             }
         }

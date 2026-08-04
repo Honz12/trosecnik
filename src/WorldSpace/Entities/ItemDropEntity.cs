@@ -47,7 +47,7 @@ namespace trosecnik.src.WorldSpace.Entities
             Position = position;
         }
 
-        public void Update(Player player, World world, ulong tick)
+        public void Update(Player player, World world, ulong tick, float deltaTime)
         {
             if (player.X == Position.X && player.Y == Position.Y && !PickedUp)
             {

@@ -21,6 +21,7 @@ namespace trosecnik.src
                 { "itemIntDesc-stoneAxe", "Těžit stromy kliknutím (vzdálenost 1)" },
 
             { "item-woodenLog", "Dřevo" },
+                { "itemIntDesc-woodenLog", "Vyrobit Dřevěný most kliknutím" },
         };
         private static Dictionary<string, string> EngLanguage = new Dictionary<string, string>
         {
@@ -42,6 +43,7 @@ namespace trosecnik.src
                 { "itemIntDesc-stoneAxe", "Click to chop down trees (range 1)" },
 
             { "item-woodenLog", "Wooden Log" },
+                { "itemIntDesc-woodenLog", "Click to craft Wooden Bridge" },
         };
 
         private static string Language = "cz";

@@ -19,7 +19,7 @@ namespace trosecnik.src.WorldSpace
         /// <param name="tick"></param>
         /// <returns></returns>
         public Vector2 GetTextureSize(ulong tick);
-        public void Update(Player player, World world, ulong tick);
+        public void Update(Player player, World world, ulong tick, float deltaTime);
         public EntityRequest GetRequest();
         public void SetPos(Vector2 position);
     }

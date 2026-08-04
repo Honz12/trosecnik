@@ -32,8 +32,10 @@ namespace trosecnik.src.InventorySpace.Items
             if (Program.world.interactableEntities.TryGetValue(position, out IEntity? entity))
             {
                 TreeEntity? tree = entity as TreeEntity;
+                TreeSaplingEntity? sapling = entity as TreeSaplingEntity;
 
                 tree?.Tree_Hit();
+                sapling?.Sapling_Break();
             }
         }
     }
