@@ -131,9 +131,29 @@ namespace trosecnik.src.InventorySpace
             if (Selected < Items.Count)
             {
                 IItem item = Items[Selected];
+
+                string itemId = item.GetItemId();
+                string displayName = TransalationServer.GetTransalated($"item-{itemId}");
+                string intDesc = TransalationServer.GetTransalated($"itemIntDesc-{itemId}");
                 
                 int fontSize = Program.DEFAULT_FONT_SIZE * Program.GameGraphicsScale;
-                Program.DrawCustomText(item.GetDisplayName(), menuOriginX, menuOriginY - fontSize - Program.GameGraphicsScale, fontSize, Color.Black);
+                Program.DrawCustomText(
+                    displayName,
+                    menuOriginX, menuOriginY - fontSize - Program.GameGraphicsScale,
+                    fontSize,
+                    Color.Black
+                );
+
+                if (item.GetItemType() != IItem.ItemType.NoInteraction)
+                {
+                    Program.DrawCustomText(
+                        intDesc,
+                        Program.ScreenCenterX - Raylib.MeasureTextEx(Program.font, intDesc, fontSize, Program.fontSpacing).X / 2,
+                        Program.ScreenHeight - 8 * Program.GameGraphicsScale - fontSize - Program.GameGraphicsScale,
+                        fontSize,
+                        Color.Black
+                    );
+                }
             }
         }
 
@@ -156,7 +176,7 @@ namespace trosecnik.src.InventorySpace
             {
                 IItem item = Items[Selected];
                 
-                if (Raylib.IsMouseButtonPressed(MouseButton.Right))
+                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
                 {
                     switch (item.GetItemType())
                     {
@@ -164,13 +184,18 @@ namespace trosecnik.src.InventorySpace
                             item.ConsumeItem(player, Selected);
                             break;
                         case IItem.ItemType.Placeable:
-                            item.PlaceItem(interactionPosition, Selected);
+                            if (
+                                new Vector2(
+                                    interactionPosition.X - player.X,
+                                    interactionPosition.Y - player.Y
+                                ).LengthSquared() < 4
+                            ) item.PlaceItem(interactionPosition, Selected);
                             break;
                         default:
                             break;
                     }
                 }
-                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                if (Raylib.IsMouseButtonPressed(MouseButton.Right))
                 {
                     if (
                         new Vector2(

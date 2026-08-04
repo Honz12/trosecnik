@@ -45,8 +45,8 @@ namespace trosecnik.src
 
         public static AppMode appMode = AppMode.Playing;
 
-        private static Font font;
-        private static float fontSpacing = 0;
+        public static Font font;
+        public static float fontSpacing = 0;
 
         public static void AddDebugMenuEntry(string entry)
         {
@@ -180,15 +180,6 @@ namespace trosecnik.src
                             player.PlayerPathfinder.SetStart(player.X, player.Y);
                             player.PlayerPathfinder.SetTarget((int) mouseWorldPosition.X, (int) mouseWorldPosition.Y);
                             player.PlayerPathfinder.Recalculate();
-                        }
-
-                        if (Raylib.IsMouseButtonPressed(MouseButton.Side))
-                        {
-                            WorldSpace.Entities.SimpleEntity simpleEntity = new();
-
-                            simpleEntity.SetPos(new(mouseWorldPosition.X, mouseWorldPosition.Y));
-
-                            world.AddEntity(simpleEntity);
                         }
 
                         player.Update(Tick, mouseWorldPosition, deltaTime);

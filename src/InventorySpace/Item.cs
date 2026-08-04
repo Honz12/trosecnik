@@ -11,7 +11,7 @@ namespace trosecnik.src.InventorySpace
 
         public string GetTexture();
 
-        public string GetDisplayName();
+        public string GetItemId();
 
         public ItemType GetItemType();
         

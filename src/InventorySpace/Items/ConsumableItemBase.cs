@@ -10,8 +10,7 @@ namespace trosecnik.src.InventorySpace.Items
             player.PlayerInventory.DeleteItem(idx);
         }
         public abstract void ConsumeAction(Player player);
-
-        public abstract string GetDisplayName();
+        public abstract string GetConsumableItemId();
 
         public IItem.ItemType GetItemType()
         {
@@ -23,6 +22,11 @@ namespace trosecnik.src.InventorySpace.Items
         public void PlaceItem(Vector2 position, int idx)
         {
             throw new NotImplementedException();
+        }
+
+        public string GetItemId()
+        {
+            return GetConsumableItemId();
         }
     }
 }

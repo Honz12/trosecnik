@@ -47,10 +47,7 @@ namespace trosecnik.src
             PlayerWorld = world;
             PlayerPathfinder = new(world);
 
-            for (int _ = 0; _ < Inventory.INVENTORY_SIZE; _++)
-            {
-                PlayerInventory.AddItem(new InventorySpace.Items.WoodenBridgeItem());
-            }
+            PlayerInventory.AddItem(new InventorySpace.Items.StoneAxeItem());
         }
 
         public void Update(ulong tick, Vector2 mousePosition, float deltaTime)

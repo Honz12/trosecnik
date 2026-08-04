@@ -11,7 +11,16 @@ namespace trosecnik.src
             { "hudBarThirst", "Žízeň" },
             { "hudBarHunger", "Hlad" },
             { "hudBarHealth", "Zdraví" },
-            { "itemRedBerries", "Červené bobule"},
+            { "item-redBerries", "Červené bobule"},
+                { "itemIntDesc-redBerries", "Sníst kliknutím" },
+
+            { "item-woodenBridge", "Dřevěný most"},
+                { "itemIntDesc-woodenBridge", "Postavit klinkutím na vodu (vzdálenost 1)" },
+
+            { "item-stoneAxe", "Kamená sekera" },
+                { "itemIntDesc-stoneAxe", "Těžit stromy kliknutím (vzdálenost 1)" },
+
+            { "item-woodenLog", "Dřevo" },
         };
         private static Dictionary<string, string> EngLanguage = new Dictionary<string, string>
         {
@@ -22,7 +31,17 @@ namespace trosecnik.src
             { "hudBarThirst", "Thirst" },
             { "hudBarHunger", "Hunger" },
             { "hudBarHealth", "Health" },
-            { "itemRedBerries", "Red Berries"},
+
+            { "item-redBerries", "Red Berries"},
+                { "itemIntDesc-redBerries", "Click to eat" },
+
+            { "item-woodenBridge", "Wooden Bridge"},
+                { "itemIntDesc-woodenBridge", "Click on water to build (range 1)" },
+
+            { "item-stoneAxe", "Stone Axe" },
+                { "itemIntDesc-stoneAxe", "Click to chop down trees (range 1)" },
+
+            { "item-woodenLog", "Wooden Log" },
         };
 
         private static string Language = "cz";

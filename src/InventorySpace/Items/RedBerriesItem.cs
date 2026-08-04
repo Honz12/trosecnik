@@ -11,9 +11,9 @@ namespace trosecnik.src.InventorySpace.Items
             player.Health += 5;
         }
 
-        public override string GetDisplayName()
+        public override string GetConsumableItemId()
         {
-            return TransalationServer.GetTransalated("itemRedBerries");
+            return "woodenLog";
         }
 
         public override string GetTexture()

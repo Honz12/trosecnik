@@ -9,9 +9,9 @@ namespace trosecnik.src.InventorySpace.Items
             throw new NotImplementedException();
         }
 
-        public string GetDisplayName()
+        public string GetItemId()
         {
-            return TransalationServer.GetTransalated("itemWoodenBridge");
+            return "woodenBridge";
         }
 
         public IItem.ItemType GetItemType()
