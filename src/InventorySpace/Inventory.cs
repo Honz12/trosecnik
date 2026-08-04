@@ -163,6 +163,9 @@ namespace trosecnik.src.InventorySpace
                         case IItem.ItemType.Consumable:
                             item.ConsumeItem(player, Selected);
                             break;
+                        case IItem.ItemType.Placeable:
+                            item.PlaceItem(interactionPosition, Selected);
+                            break;
                         default:
                             break;
                     }
@@ -174,6 +177,7 @@ namespace trosecnik.src.InventorySpace
                             interactionPosition.X - player.X,
                             interactionPosition.Y - player.Y
                         ).LengthSquared() < 9
+                        && Program.world.GetWalkable((int) interactionPosition.X, (int) interactionPosition.Y)
                     )
                     {
                         WorldSpace.Entities.ItemDropEntity itemDrop = new(item);

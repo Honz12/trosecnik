@@ -1,10 +1,12 @@
+using System.Numerics;
+
 namespace trosecnik.src.WorldSpace.Tiles
 {
     public class DeepWaterTile : ITile
     {
-        public uint GetTextureId(ulong tick)
+        public Vector2 GetTextureAltlasCoords(ulong tick)
         {
-            return 12u + (uint) (tick / 30 % 8);
+            return new(tick / 10 % 8 + 8, 1);
         }
 
         public bool GetWalkable()

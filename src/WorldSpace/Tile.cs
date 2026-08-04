@@ -1,8 +1,10 @@
+using System.Numerics;
+
 namespace trosecnik.src.WorldSpace
 {
     public interface ITile
     {
-        public uint GetTextureId(ulong tick);
+        public Vector2 GetTextureAltlasCoords(ulong tick);
         public bool GetWalkable();
     }
 }

@@ -7,7 +7,7 @@ namespace trosecnik.src
 {
     public class Player
     {
-        private const int MOVE_WAIT = 10;
+        private const double MOVE_WAIT = 0.1;
         private const double EXAUSTION_PER_STEP = 0.1;
         private const double EXAUSTION_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
         private const double THIRSTING_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
@@ -24,10 +24,12 @@ namespace trosecnik.src
 
         public int X;
         public int Y;
-        private byte direction = 0;
 
         public Pathfinder PlayerPathfinder;
         public Inventory PlayerInventory = new();
+
+        public double MoveWait = 0;
+        public MovementMode movementMode = MovementMode.WASD;
 
         public int Health = MAX_HEALTH;
         public int Hunger = MAX_HUNGER;
@@ -36,9 +38,7 @@ namespace trosecnik.src
         public double Thirsting = MAX_SATURATION;
 
         private World PlayerWorld;
-        private int moveWaiter = 0;
-
-        public MovementMode movementMode = MovementMode.WASD;
+        private byte direction = 0;
 
         public Player(int x, int y, World world)
         {
@@ -47,17 +47,20 @@ namespace trosecnik.src
             PlayerWorld = world;
             PlayerPathfinder = new(world);
 
-            PlayerInventory.AddItem(new InventorySpace.Items.RedBerriesItem());
+            for (int _ = 0; _ < Inventory.INVENTORY_SIZE; _++)
+            {
+                PlayerInventory.AddItem(new InventorySpace.Items.WoodenBridgeItem());
+            }
         }
 
-        public void Update(ulong tick, Vector2 mousePosition)
+        public void Update(ulong tick, Vector2 mousePosition, float deltaTime)
         {
             Saturation -= EXAUSTION_PER_TICK;
             Thirsting -= THIRSTING_PER_TICK;
             
             if (movementMode == MovementMode.Pathfind)
             {
-                if (tick % MOVE_WAIT == 0)
+                if (MoveWait <= 0)
                 {
                     if (!PlayerPathfinder.Finished)
                     {
@@ -71,6 +74,7 @@ namespace trosecnik.src
                             X = pos.Value.X;
                             Y = pos.Value.Y;
                             Saturation -= EXAUSTION_PER_STEP;
+                            MoveWait = MOVE_WAIT;
                         }
                     }
                 }
@@ -79,30 +83,30 @@ namespace trosecnik.src
             {
                 int moveX = 0;
                 int moveY = 0;
-                if (moveWaiter <= 0)
+                if (MoveWait <= 0)
                 {
                     if (Raylib.IsKeyDown(KeyboardKey.W))
                     {
                         moveY--;
-                        moveWaiter = MOVE_WAIT;
+                        MoveWait = MOVE_WAIT;
                         direction = 1;
                     }
                     if (Raylib.IsKeyDown(KeyboardKey.S))
                     {
                         moveY++;
-                        moveWaiter = MOVE_WAIT;
+                        MoveWait = MOVE_WAIT;
                         direction = 0;
                     }
                     if (Raylib.IsKeyDown(KeyboardKey.A))
                     {
                         moveX--;
-                        moveWaiter = MOVE_WAIT;
+                        MoveWait = MOVE_WAIT;
                         direction = 2;
                     }
                     if (Raylib.IsKeyDown(KeyboardKey.D))
                     {
                         moveX++;
-                        moveWaiter = MOVE_WAIT;
+                        MoveWait = MOVE_WAIT;
                         direction = 3;
                     }
 
@@ -114,7 +118,7 @@ namespace trosecnik.src
                             Saturation -= EXAUSTION_PER_STEP;
                         }
                 }
-                moveWaiter--;
+                MoveWait -= deltaTime;
             }
 
             if (Health <= 0)

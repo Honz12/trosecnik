@@ -1,10 +1,12 @@
+using System.Numerics;
+
 namespace trosecnik.src.WorldSpace.Tiles
 {
     public class SandTile : ITile
     {
-        public uint GetTextureId(ulong tick)
+        public Vector2 GetTextureAltlasCoords(ulong tick)
         {
-            return 11;
+            return new(2, 0);
         }
 
         public bool GetWalkable()

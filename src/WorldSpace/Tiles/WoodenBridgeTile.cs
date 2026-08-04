@@ -2,16 +2,16 @@ using System.Numerics;
 
 namespace trosecnik.src.WorldSpace.Tiles
 {
-    public class WaterTile : ITile
+    public class WoodenBridgeTile : ITile
     {
         public Vector2 GetTextureAltlasCoords(ulong tick)
         {
-            return new(tick / 10 % 8, 1);
+            return new(0, 2);
         }
 
         public bool GetWalkable()
         {
-            return false;
+            return true;
         }
     }
 }

@@ -87,6 +87,8 @@ namespace trosecnik.src
 
             while (!Raylib.WindowShouldClose() && !ShouldExit)
             {
+                float deltaTime = Raylib.GetFrameTime();
+
                 ScreenWidth = Raylib.GetScreenWidth();
                 ScreenHeight = Raylib.GetScreenHeight();
 
@@ -131,7 +133,7 @@ namespace trosecnik.src
                     DebugShown = !DebugShown;
                 }
 
-                AppUpdate(mouseWorldPosition);
+                AppUpdate(mouseWorldPosition, deltaTime);
 
                 debugMenuEntries = 0;
 
@@ -150,7 +152,7 @@ namespace trosecnik.src
                     AddDebugMenuEntry($"Language: {TransalationServer.GetLanguage().ToUpper()}");
                     string mtString = miniTiles ? " [MT]" : "";
 
-                    AddDebugMenuEntry($"Position - X:{player.X} Y:{player.Y}");
+                    AddDebugMenuEntry($"Position - X:{player.X} Y:{player.Y} MoveWaitTime:{player.MoveWait}");
                     AddDebugMenuEntry($"Viewport - TilesHorizonzaly:{ScreenTilesHor} TilesVerticaly:{ScreenTilesVer}{mtString} TileSizeInPixels:{world.TileSize}");
                     AddDebugMenuEntry($"Screen - Width:{ScreenWidth} Height:{ScreenHeight} GameGraphicsScale:{GameGraphicsScale}");
                     AddDebugMenuEntry($"Cursor - WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
@@ -167,7 +169,7 @@ namespace trosecnik.src
             Raylib.CloseWindow();
         }
 
-        private static void AppUpdate(Vector2 mouseWorldPosition)
+        private static void AppUpdate(Vector2 mouseWorldPosition, float deltaTime)
         {
             switch (appMode)
             {
@@ -189,7 +191,7 @@ namespace trosecnik.src
                             world.AddEntity(simpleEntity);
                         }
 
-                        player.Update(Tick, mouseWorldPosition);
+                        player.Update(Tick, mouseWorldPosition, deltaTime);
                         camera.X += (player.X - camera.X) * 0.1;
                         camera.Y += (player.Y - camera.Y) * 0.1;
 

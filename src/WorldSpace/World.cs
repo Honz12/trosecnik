@@ -1,18 +1,16 @@
 using System.Numerics;
-using System.Reflection.PortableExecutable;
 using Raylib_cs;
-using trosecnik.src.InventorySpace;
 
 namespace trosecnik.src.WorldSpace
 {
     public class TileRenderer
     {
-        public static void DrawTile(string tileId, Vector2 position, int tileSize)
+        public static void DrawTile(Vector2 position, int tileSize, Vector2 atlasCoords)
         {
-            Texture2D texture = TextureManager.GetTexture(tileId);
+            Texture2D texture = TextureManager.GetTexture("tiles/tile.png");
 
             // Entire source image
-            Rectangle sourceRec = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle sourceRec = new Rectangle(atlasCoords.X * Program.BASE_TILE_SIZE, atlasCoords.Y * Program.BASE_TILE_SIZE, Program.BASE_TILE_SIZE, Program.BASE_TILE_SIZE);
 
             // Destination rectangle on screen (Position + Size)
             Rectangle destRec = new Rectangle(position.X + Program.ScreenCenterX - tileSize / 2, position.Y + Program.ScreenCenterY - tileSize / 2, tileSize, tileSize);
@@ -29,10 +27,12 @@ namespace trosecnik.src.WorldSpace
     {
         public static Tiles.VoidTile voidTile = new();
 
-        private readonly ITile[,] tiles;
+        private readonly ITile[,] layer1;
+        private readonly ITile?[,] layer2;
         private bool[,] entityTileBlocks;
         private bool[] entityTileBlocksColumnChanged;
         private readonly List<IEntity> entities;
+        public readonly Dictionary<Vector2, IEntity> interactableEntities;
         public int Width;
         public int Height;
 
@@ -45,10 +45,12 @@ namespace trosecnik.src.WorldSpace
             Width = width;
             Height = height;
 
-            tiles = new ITile[width, height];
+            layer1 = new ITile[width, height];
+            layer2 = new ITile[width, height];
             entityTileBlocks = new bool[width, height];
             entityTileBlocksColumnChanged = new bool[width];
             entities = [];
+            interactableEntities = [];
 
             GenerateWorld(seed);
         }
@@ -70,12 +72,16 @@ namespace trosecnik.src.WorldSpace
                     if (x < 0 || x >= Width || y < 0 || y >= Height)
                         continue;
 
-                    ITile tile = tiles[x, y];
+                    ITile tileL1 = layer1[x, y];
+                    ITile? tileL2 = layer2[x, y];
 
-                    string tileId = $"tiles/tile_{tile.GetTextureId(tick):D4}.png";
                     Vector2 position = new((float) ((rx - offsetLittleX) * TileSize), (float) ((ry - offsetLittleY) * TileSize));
 
-                    TileRenderer.DrawTile(tileId, position, TileSize);
+                    TileRenderer.DrawTile(position, TileSize, tileL1.GetTextureAltlasCoords(tick));
+                    if (tileL2 != null)
+                    {
+                        TileRenderer.DrawTile(position, TileSize, tileL2.GetTextureAltlasCoords(tick));
+                    }
                 }
             }
             foreach (var entity in entities)
@@ -89,11 +95,26 @@ namespace trosecnik.src.WorldSpace
             }
         }
 
-        public ITile GetTile(int x, int y)
+        public ITile GetTileLayer1(int x, int y)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
                 return voidTile;
-            return tiles[x, y];
+            return layer1[x, y];
+        }
+
+        public ITile? GetTileLayer2(int x, int y)
+        {
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+                return null;
+            return layer2[x, y];
+        }
+
+        public bool SetTileLayer2(ITile? tile, int x, int y)
+        {
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+                return false;
+            layer2[x, y] = tile;
+            return true;
         }
 
         public void DrawEntity(IEntity entity, Camera camera, ulong tick)
@@ -160,20 +181,20 @@ namespace trosecnik.src.WorldSpace
                     double height = heightNoise.GetNoise(x, y);
                     if (height > 0.1)
                     {
-                        tiles[x, y] = new Tiles.GrassTile();
+                        layer1[x, y] = new Tiles.GrassTile();
                         grassTiles.Add(new (x, y));
                     }
                     else if (height > 0)
                     {
-                        tiles[x, y] = new Tiles.SandTile();
+                        layer1[x, y] = new Tiles.SandTile();
                     }
                     else if (height > -0.5)
                     {
-                        tiles[x, y] = new Tiles.WaterTile();
+                        layer1[x, y] = new Tiles.WaterTile();
                     }
                     else
                     {
-                        tiles[x, y] = new Tiles.DeepWaterTile();
+                        layer1[x, y] = new Tiles.DeepWaterTile();
                     }
                 }
             }
@@ -210,6 +231,7 @@ namespace trosecnik.src.WorldSpace
                     entities.Add(treeEntity);
 
                     trees.Add(coords, treeEntity);
+                    interactableEntities.Add(coords, treeEntity);
                 }
             }
         }
@@ -282,7 +304,13 @@ namespace trosecnik.src.WorldSpace
         {
             if (IsTileEntityBlocked(x, y)) return false;
 
-            ITile tile = GetTile(x, y);
+            ITile tile = GetTileLayer1(x, y);
+            ITile? layer2Tile = GetTileLayer2(x, y);
+
+            if (layer2Tile != null)
+            {
+                return layer2Tile.GetWalkable();
+            }
 
             return tile.GetWalkable();
         }
