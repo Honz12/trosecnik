@@ -53,6 +53,7 @@ namespace trosecnik.src.WorldSpace.Entities
             {
                 if (!player.PlayerInventory.AddItem(Item))
                 {
+                    SoundManager.Play("player/pickupItem/pickupItem1.wav");
                     PickedUp = true;
                 }
             }

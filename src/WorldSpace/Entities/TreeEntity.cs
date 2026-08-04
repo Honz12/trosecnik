@@ -8,7 +8,7 @@ namespace trosecnik.src.WorldSpace.Entities
         private static readonly Random Rng = new();
 
         private Vector2 Position;
-        private int Health = 10;
+        private int Health = Rng.Next(3, 8);
         private bool Broken = false;
 
         Vector2 shake = new();

@@ -203,6 +203,7 @@ namespace trosecnik.src.InventorySpace
                             interactionPosition.Y - player.Y
                         ).LengthSquared() < 9
                         && Program.world.GetWalkable((int) interactionPosition.X, (int) interactionPosition.Y)
+                        && (interactionPosition.X != player.X || interactionPosition.Y != player.Y)
                     )
                     {
                         WorldSpace.Entities.ItemDropEntity itemDrop = new(item);
@@ -212,6 +213,8 @@ namespace trosecnik.src.InventorySpace
                         Program.world.AddEntity(itemDrop);
 
                         player.PlayerInventory.DeleteItem(Selected);
+
+                        SoundManager.Play("player/dropItem/dropItem1.wav");
                     }
                 }
             }

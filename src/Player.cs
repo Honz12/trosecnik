@@ -7,16 +7,12 @@ namespace trosecnik.src
 {
     public class Player
     {
-        private const double MOVE_WAIT = 0.1;
-        private const double EXAUSTION_PER_STEP = 0.1;
-        private const double EXAUSTION_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
-        private const double THIRSTING_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
         public const int MAX_HEALTH = 100;
         public const int MAX_HUNGER = 100;
         public const double MAX_SATURATION = 20.0;
         public const int MAX_THIRST = 100;
         public const double MAX_THIRSTING = 20.0;
-
+        
         public enum MovementMode
         {
             Pathfind, WASD
@@ -37,8 +33,14 @@ namespace trosecnik.src
         public int Thirst = MAX_THIRST;
         public double Thirsting = MAX_SATURATION;
 
+        private const double MOVE_WAIT = 0.1;
+        private const double EXAUSTION_PER_STEP = 0.1;
+        private const double EXAUSTION_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
+        private const double THIRSTING_PER_TICK = 0.01; // {0.01 * 60}/s = 0.6/s
+
         private World PlayerWorld;
         private byte direction = 0;
+        private Random Rng = new();
 
         public Player(int x, int y, World world)
         {
@@ -48,6 +50,11 @@ namespace trosecnik.src
             PlayerPathfinder = new(world);
 
             PlayerInventory.AddItem(new InventorySpace.Items.StoneAxeItem());
+        }
+
+        private void PlayStepSound()
+        {
+            SoundManager.Play($"player/step/step{Rng.Next(5) + 1}.wav");
         }
 
         public void Update(ulong tick, Vector2 mousePosition, float deltaTime)
@@ -72,6 +79,7 @@ namespace trosecnik.src
                             Y = pos.Value.Y;
                             Saturation -= EXAUSTION_PER_STEP;
                             MoveWait = MOVE_WAIT;
+                            PlayStepSound();
                         }
                     }
                 }
@@ -113,6 +121,7 @@ namespace trosecnik.src
                             X += moveX;
                             Y += moveY;
                             Saturation -= EXAUSTION_PER_STEP;
+                            PlayStepSound();
                         }
                 }
                 MoveWait -= deltaTime;
