@@ -30,6 +30,9 @@ namespace trosecnik.src
 
             { "item-woodenWall", "Dřevěná zeď" },
                 { "itemIntDesc-woodenWall", "Postavit klinkutím" },
+
+            { "item-hammer", "Kladivo" },
+                { "itemIntDesc-hammer", "Ničit kliknutím" },
         };
         private static readonly Dictionary<string, string> EngLanguage = new()
         {
@@ -59,6 +62,9 @@ namespace trosecnik.src
 
             { "item-woodenWall", "Wooden Wall" },
                 { "itemIntDesc-woodenWall", "Click to build" },
+
+            { "item-hammer", "Hammer" },
+                { "itemIntDesc-hammer", "Click to break" },
         };
 
         private static string Language = "cz";

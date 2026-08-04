@@ -212,8 +212,6 @@ namespace trosecnik.src
                 Raylib.EndDrawing();
 
                 Tick++;
-                Time++;
-                Time %= MAX_TIME;
             }
 
             TextureManager.UnloadAll();
@@ -245,6 +243,8 @@ namespace trosecnik.src
                         camera.Y += (player.Y - camera.Y) * 0.1;
 
                         world.UpdateEntites(player, Tick, deltaTime);
+                        Time++;
+                        Time %= MAX_TIME;
                     }
                     break;
                 case AppMode.Crafting:
@@ -298,6 +298,18 @@ namespace trosecnik.src
             hud.Health = (int) ((double) player.Health * (100 / Player.MAX_HEALTH));
             hud.Hunger = (int) ((double) player.Hunger * (100 / Player.MAX_HUNGER));
             hud.Draw();
+
+            Raylib.DrawRectangle(
+                0, 0,
+                ScreenWidth, ScreenHeight,
+                new Color(0, 0, 0, (int) (GetNightTintAlpha() * 255))
+            );
+        }
+
+        private static double GetNightTintAlpha()
+        {
+            const double MAX_TINT = 0.5;
+            return 1 - (0.5 * (Math.Sin(Time / MAX_TIME * Math.PI + Math.PI / 2) + 1) * (1 - MAX_TINT) + MAX_TINT);
         }
 
         public static void DrawCustomText(string text, float x, float y, float fontSize, Color color)
