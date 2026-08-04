@@ -8,7 +8,7 @@ namespace trosecnik.src.WorldSpace.Entities
         private static readonly Random Rng = new();
 
         private Vector2 Position;
-        private int Health = 3;
+        private int Health = 10;
         private bool Broken = false;
 
         Vector2 shake = new();
@@ -75,6 +75,8 @@ namespace trosecnik.src.WorldSpace.Entities
 
         public void Tree_Hit()
         {
+            SoundManager.Play($"entity/tree/chop{Rng.Next(6) + 1}.wav");
+
             Health--;
 
             if (Rng.Next(5) == 0) Tree_Drop();

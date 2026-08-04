@@ -68,6 +68,7 @@ namespace trosecnik.src
             Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.ResizableWindow | ConfigFlags.FullscreenMode);
 
             Raylib.InitWindow(ScreenWidth, ScreenHeight, $"{TransalationServer.GetTransalated("gameName")} {VER_STRING}");
+            Raylib.InitAudioDevice();
             
             Raylib.SetWindowMinSize(640, 360);
             Raylib.SetExitKey(KeyboardKey.Null);
@@ -134,6 +135,7 @@ namespace trosecnik.src
                 }
 
                 AppUpdate(mouseWorldPosition, deltaTime);
+                SoundManager.Update();
 
                 debugMenuEntries = 0;
 
@@ -166,6 +168,9 @@ namespace trosecnik.src
                 Tick++;
             }
 
+            TextureManager.UnloadAll();
+            SoundManager.UnloadAll();
+            Raylib.CloseAudioDevice();
             Raylib.CloseWindow();
         }
 
