@@ -35,6 +35,7 @@ namespace trosecnik.src.WorldSpace
         public readonly Dictionary<Vector2, IEntity> interactableEntities;
         public int Width;
         public int Height;
+        public int Seed;
 
         public int ClearingEntityTileBlocksColumns = 0;
 
@@ -44,6 +45,7 @@ namespace trosecnik.src.WorldSpace
         {
             Width = width;
             Height = height;
+            Seed = seed;
 
             layer1 = new ITile[width, height];
             layer2 = new ITile[width, height];

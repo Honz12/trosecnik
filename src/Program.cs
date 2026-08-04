@@ -16,6 +16,7 @@ namespace trosecnik.src
         public const int BASE_TILE_SIZE = 16;
         public const int MINI_TILE_SIZE = 4;
         public const int DEFAULT_FONT_SIZE = 16;
+        public const int MAX_TIME = 18000; // 60 * 5 * 60 == 5 minutes
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
@@ -36,6 +37,7 @@ namespace trosecnik.src
         public static CraftingUI craftingUI = new(player);
 
         public static ulong Tick;
+        public static uint Time;
         private static int debugMenuEntries = 0;
         private static bool miniTiles = false;
         private static bool DebugShown = false;
@@ -194,6 +196,7 @@ namespace trosecnik.src
                 {
                     AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
                     AddDebugMenuEntry($"Tick: {Tick}");
+                    AddDebugMenuEntry($"Time: {Time}");
                     AddDebugMenuEntry($"Language: {TransalationServer.GetLanguage().ToUpper()}");
                     string mtString = miniTiles ? " [MT]" : "";
 
@@ -202,13 +205,15 @@ namespace trosecnik.src
                     AddDebugMenuEntry($"Screen - Width:{ScreenWidth} Height:{ScreenHeight} GameGraphicsScale:{GameGraphicsScale}");
                     AddDebugMenuEntry($"Cursor - WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
                     AddDebugMenuEntry($"Health:{player.Health} Hunger:{player.Hunger} Saturation:{player.Saturation:F2} Thirst:{player.Thirst} Thirsting:{player.Thirsting:F2}");
-                    AddDebugMenuEntry($"World - Width:{world.Width} Height:{world.Height}");
+                    AddDebugMenuEntry($"World - Width:{world.Width} Height:{world.Height} Seed:{world.Seed}");
                     AddDebugMenuEntry($"EntityCount:{world.GetEntityCount()} ClearingEntityTileBlocksColumns:{world.ClearingEntityTileBlocksColumns}");
                 }
 
                 Raylib.EndDrawing();
 
                 Tick++;
+                Time++;
+                Time %= MAX_TIME;
             }
 
             TextureManager.UnloadAll();
