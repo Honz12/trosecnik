@@ -1,14 +1,15 @@
 using System.Numerics;
 using Raylib_cs;
+using trosecnik.src.Data;
 
 namespace trosecnik.src.InventorySpace
 {
     public class Inventory
     {
         public const int INVENTORY_SIZE = 30;
+        public const int ITEM_SIZE_PX = 16;
         private const int SLOTS_PER_ROW = 5;
         private const int SLOT_SIZE_PX = 22;
-        private const int ITEM_SIZE_PX = 16;
 
         private int Selected = 0;
 

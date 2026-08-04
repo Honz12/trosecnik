@@ -1,5 +1,6 @@
 using System.Numerics;
 using trosecnik.src.InventorySpace;
+using trosecnik.src.Data;
 
 namespace trosecnik.src.WorldSpace.Entities
 {

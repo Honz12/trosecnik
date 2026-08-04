@@ -202,6 +202,8 @@ namespace trosecnik.src
                     break;
                 case AppMode.Crafting:
                     {
+                        craftingUI.Update();
+
                         if (Raylib.IsKeyPressed(KeyboardKey.Escape) || Raylib.IsKeyPressed(KeyboardKey.C))
                         {
                             appMode = AppMode.Playing;
