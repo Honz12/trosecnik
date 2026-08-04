@@ -59,5 +59,15 @@ namespace trosecnik.src.WorldSpace.Entities
                 }
             }
         }
+
+        public void Interact()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsInteractable()
+        {
+            return false;
+        }
     }
 }

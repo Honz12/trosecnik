@@ -61,6 +61,16 @@ namespace trosecnik.src.WorldSpace.Entities
             shake.Y *= -0.3f;
         }
 
+        public void Interact()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsInteractable()
+        {
+            return false;
+        }
+
         public void Tree_Drop(bool final)
         {
 

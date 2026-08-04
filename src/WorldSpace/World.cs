@@ -201,8 +201,6 @@ namespace trosecnik.src.WorldSpace
                 }
             }
 
-            Dictionary<Vector2, Entities.TreeEntity> trees = [];
-
             foreach (var coords in grassTiles)
             {
                 if (rng.Next(100) == 0)
@@ -213,7 +211,7 @@ namespace trosecnik.src.WorldSpace
                     {
                         for (int y = -2; y <= 2; y++)
                         {
-                            if (trees.ContainsKey(new Vector2(x + coords.X, y + coords.Y)))
+                            if (interactableEntities.ContainsKey(new Vector2(x + coords.X, y + coords.Y)))
                             {
                                 validPosition = false;
                                 break;
@@ -232,8 +230,37 @@ namespace trosecnik.src.WorldSpace
 
                     entities.Add(treeEntity);
 
-                    trees.Add(coords, treeEntity);
                     interactableEntities.Add(coords, treeEntity);
+                }
+                if (rng.Next(200) == 0)
+                {
+                    bool validPosition = true;
+
+                    for (int x = -2; x <= 2; x++)
+                    {
+                        for (int y = -2; y <= 2; y++)
+                        {
+                            if (interactableEntities.ContainsKey(new Vector2(x + coords.X, y + coords.Y)))
+                            {
+                                validPosition = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!validPosition)
+                    {
+                        continue;
+                    }
+
+                    var bushEntity = new Entities.RedBerryBush();
+
+                    bushEntity.SetPos(coords);
+                    bushEntity.Bush_Grow();
+
+                    entities.Add(bushEntity);
+
+                    interactableEntities.Add(coords, bushEntity);
                 }
             }
         }

@@ -1,6 +1,7 @@
 using System.Numerics;
 using Raylib_cs;
 using trosecnik.src.Data;
+using trosecnik.src.WorldSpace;
 
 namespace trosecnik.src.InventorySpace
 {
@@ -29,8 +30,15 @@ namespace trosecnik.src.InventorySpace
         {
             if (Items.Count < INVENTORY_SIZE)
             {
-                Items.Add(item);
-                Items.Sort((a, b) => a.GetItemId().CompareTo(b.GetItemId()));
+                int lastIndex = Items.FindLastIndex(i => i.GetItemId() == item.GetItemId());
+                if (lastIndex >= 0)
+                {
+                    Items.Insert(lastIndex + 1, item);
+                }
+                else
+                {
+                    Items.Add(item);
+                }
                 return false;
             }
             return true;
@@ -182,6 +190,16 @@ namespace trosecnik.src.InventorySpace
                 {
                     switch (item.GetItemType())
                     {
+                        case IItem.ItemType.NoInteraction:
+                            {
+                                bool success = Program.world.interactableEntities.TryGetValue(interactionPosition, out IEntity? entity);
+
+                                if (success && entity != null)
+                                {
+                                    if (entity.IsInteractable()) entity.Interact();
+                                }
+                            }
+                            break;
                         case IItem.ItemType.Consumable:
                             item.ConsumeItem(player, Selected);
                             break;
@@ -190,7 +208,7 @@ namespace trosecnik.src.InventorySpace
                                 new Vector2(
                                     interactionPosition.X - player.X,
                                     interactionPosition.Y - player.Y
-                                ).LengthSquared() < 4
+                                ).LengthSquared() < 9
                             ) item.PlaceItem(interactionPosition, Selected);
                             break;
                         default:
@@ -217,6 +235,18 @@ namespace trosecnik.src.InventorySpace
                         player.PlayerInventory.RemoveItem(Selected);
 
                         SoundManager.Play("player/dropItem/dropItem1.wav");
+                    }
+                }
+            }
+            else
+            {
+                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                {
+                    bool success = Program.world.interactableEntities.TryGetValue(interactionPosition, out IEntity? entity);
+
+                    if (success && entity != null)
+                    {
+                        if (entity.IsInteractable()) entity.Interact();
                     }
                 }
             }

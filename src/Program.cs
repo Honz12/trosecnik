@@ -1,5 +1,6 @@
 using System.Numerics;
 using Raylib_cs;
+using trosecnik.src.Data;
 using trosecnik.src.InventorySpace;
 using trosecnik.src.UI;
 using trosecnik.src.WorldSpace;
@@ -20,7 +21,7 @@ namespace trosecnik.src
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
-        public const string VER_STRING = "0.3";
+        public const string VER_STRING = "0.4"; 
 
         public static int ScreenWidth = 640;
         public static int ScreenHeight = 360;
@@ -179,6 +180,27 @@ namespace trosecnik.src
                     DebugShown = !DebugShown;
                 }
 
+                if (Raylib.IsKeyPressed(KeyboardKey.G))
+                {
+                    bool wasFullscreen = Raylib.IsWindowFullscreen();
+                    if (wasFullscreen) Raylib.ToggleFullscreen();
+                    Console.Write("GIVE ITEM >>>");
+                    string? id = Console.ReadLine();
+                    try
+                    {
+                        if (id != null)
+                        {
+                            player.PlayerInventory.AddItem(ItemData.GetItemEntryData(id).CreateInstance());
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        Console.WriteLine(e.StackTrace);
+                    }
+                    if (wasFullscreen) Raylib.ToggleFullscreen();
+                }
+
                 AppUpdate(mouseWorldPosition, deltaTime);
                 SoundManager.Update();
 
@@ -205,7 +227,7 @@ namespace trosecnik.src
                     AddDebugMenuEntry($"Viewport - TilesHorizonzaly:{ScreenTilesHor} TilesVerticaly:{ScreenTilesVer}{mtString} TileSizeInPixels:{world.TileSize}");
                     AddDebugMenuEntry($"Screen - Width:{ScreenWidth} Height:{ScreenHeight} GameGraphicsScale:{GameGraphicsScale}");
                     AddDebugMenuEntry($"Cursor - WorldX:{mouseWorldPosition.X} WorldY:{mouseWorldPosition.Y}");
-                    AddDebugMenuEntry($"Health:{player.Health} Hunger:{player.Hunger} Saturation:{player.Saturation:F2} Thirst:{player.Thirst} Thirsting:{player.Thirsting:F2}");
+                    AddDebugMenuEntry($"Health:{player.Health} Food:{player.Food} Saturation:{player.Saturation:F2} Water:{player.Water} Thirsting:{player.Thirsting:F2}");
                     AddDebugMenuEntry($"World - Width:{world.Width} Height:{world.Height} Seed:{world.Seed}");
                     AddDebugMenuEntry($"EntityCount:{world.GetEntityCount()} ClearingEntityTileBlocksColumns:{world.ClearingEntityTileBlocksColumns}");
                 }
@@ -302,8 +324,9 @@ namespace trosecnik.src
 
             player.PlayerInventory.Draw();
 
-            hud.Health = (int) ((double) player.Health * (100 / Player.MAX_HEALTH));
-            hud.Hunger = (int) ((double) player.Hunger * (100 / Player.MAX_HUNGER));
+            hud.Health = (int) (player.Health * (100.0 / Player.MAX_HEALTH));
+            hud.Food = (int) (player.Food * (100.0 / Player.MAX_HUNGER));
+            hud.Water = (int) (player.Water * (100.0 / Player.MAX_THIRST));
             hud.Draw();
         }
 

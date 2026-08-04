@@ -38,6 +38,7 @@ namespace trosecnik.src.WorldSpace.Entities
         public void SetPos(Vector2 position)
         {
             Position = position;
+            SoundManager.Play("player/dropItem/dropItem1.wav");
             Program.world.interactableEntities.Add(Position, this);
         }
 
@@ -86,6 +87,16 @@ namespace trosecnik.src.WorldSpace.Entities
             );
             Grown = true;
             Program.world.interactableEntities.Remove(Position);
+        }
+
+        public void Interact()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsInteractable()
+        {
+            return false;
         }
     }
 }

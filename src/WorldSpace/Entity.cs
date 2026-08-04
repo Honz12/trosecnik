@@ -22,5 +22,8 @@ namespace trosecnik.src.WorldSpace
         public void Update(Player player, World world, ulong tick, float deltaTime);
         public EntityRequest GetRequest();
         public void SetPos(Vector2 position);
+
+        public bool IsInteractable();
+        public void Interact();
     }
 }

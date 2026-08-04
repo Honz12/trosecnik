@@ -28,9 +28,9 @@ namespace trosecnik.src
         public MovementMode movementMode = MovementMode.WASD;
 
         public int Health = MAX_HEALTH;
-        public int Hunger = MAX_HUNGER;
+        public int Food = MAX_HUNGER;
         public double Saturation = MAX_SATURATION;
-        public int Thirst = MAX_THIRST;
+        public int Water = MAX_THIRST;
         public double Thirsting = MAX_SATURATION;
 
         private const double MOVE_WAIT = 0.1;
@@ -135,27 +135,27 @@ namespace trosecnik.src
             if (Saturation <= 0)
             {
                 Saturation += MAX_SATURATION;
-                Hunger--;
+                Food--;
             }
 
             if (Thirsting <= 0)
             {
                 Thirsting += MAX_THIRSTING;
-                Thirst--;
+                Water--;
             }
 
             PlayerInventory.Update(this, mousePosition);
 
-            if (Hunger > 95 && tick % 600 == 0)
+            if (Food > 95 && tick % 600 == 0)
             {
                 Health++;
             }
 
             Health = Math.Max(0, Math.Min(MAX_HEALTH, Health));
-            Hunger = Math.Max(0, Math.Min(MAX_HUNGER, Hunger));
-            Thirst = Math.Max(0, Math.Min(MAX_HUNGER, Thirst));
+            Food = Math.Max(0, Math.Min(MAX_HUNGER, Food));
+            Water = Math.Max(0, Math.Min(MAX_THIRST, Water));
             Saturation = Math.Min(MAX_SATURATION, Saturation);
-            Thirsting = Math.Min(MAX_SATURATION, Thirsting);
+            Thirsting = Math.Min(MAX_THIRSTING, Thirsting);
         }
 
         public void Draw(int tileSize, Camera camera)

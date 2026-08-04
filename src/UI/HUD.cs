@@ -11,13 +11,13 @@ namespace trosecnik.src.UI
         private const int BAR_WIDTH = 128;
 
         public float Water = 100;
-        public float Hunger = 100;
+        public float Food = 100;
         public float Health = 100;
 
         public void Draw()
         {
             DrawBar(TransalationServer.GetTransalated("hudBarHealth"), Health, 0, Color.Red);
-            DrawBar(TransalationServer.GetTransalated("hudBarHunger"), Hunger, 1, Color.Orange);
+            DrawBar(TransalationServer.GetTransalated("hudBarHunger"), Food, 1, Color.Orange);
             DrawBar(TransalationServer.GetTransalated("hudBarThirst"), Water, 2, Color.Blue);
         }
 

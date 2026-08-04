@@ -10,8 +10,8 @@ namespace trosecnik.src
             { "deathMsg1", "Umřel jsi" },
             { "deathMsg2", "Mezerník pro ukončení hry" },
 
-            { "hudBarThirst", "Žízeň" },
-            { "hudBarHunger", "Hlad" },
+            { "hudBarThirst", "Voda" },
+            { "hudBarHunger", "Jídlo" },
             { "hudBarHealth", "Zdraví" },
 
             { "item-redBerries", "Červené bobule"},
@@ -33,6 +33,9 @@ namespace trosecnik.src
 
             { "item-hammer", "Kladivo" },
                 { "itemIntDesc-hammer", "Ničit kliknutím" },
+
+            { "item-berryBush", "Bobulový keř" },
+                { "itemIntDesc-berryBush", "Zasadit kliknutím" },
         };
         private static readonly Dictionary<string, string> EngLanguage = new()
         {
@@ -42,8 +45,8 @@ namespace trosecnik.src
             { "deathMsg1", "You Died" },
             { "deathMsg2", "Space to exit the game" },
 
-            { "hudBarThirst", "Thirst" },
-            { "hudBarHunger", "Hunger" },
+            { "hudBarThirst", "Water" },
+            { "hudBarHunger", "Food" },
             { "hudBarHealth", "Health" },
 
             { "item-redBerries", "Red Berries"},
@@ -65,6 +68,9 @@ namespace trosecnik.src
 
             { "item-hammer", "Hammer" },
                 { "itemIntDesc-hammer", "Click to break" },
+
+            { "item-berryBush", "Berry Bush" },
+                { "itemIntDesc-berryBush", "Click to plant" },
         };
 
         private static string Language = "cz";

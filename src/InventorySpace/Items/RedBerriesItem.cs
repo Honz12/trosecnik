@@ -6,7 +6,7 @@ namespace trosecnik.src.InventorySpace.Items
     {
         public override void ConsumeAction(Player player)
         {
-            player.Hunger += 20;
+            player.Food += 20;
             player.Saturation = Player.MAX_SATURATION;
             player.Health += 5;
         }
