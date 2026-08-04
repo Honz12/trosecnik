@@ -38,11 +38,6 @@ namespace trosecnik.src.WorldSpace.Entities
         public void SetPos(Vector2 position)
         {
             Position = position;
-            if (Program.world.interactableEntities.ContainsKey(Position))
-            {
-                Sapling_Break(true);
-                return;
-            }
             Program.world.interactableEntities.Add(Position, this);
         }
 
@@ -97,6 +92,7 @@ namespace trosecnik.src.WorldSpace.Entities
 
             Program.world.AddEntity(sapling);
             Grown = true;
+            Program.world.interactableEntities.Remove(Position);
         }
     }
 }
