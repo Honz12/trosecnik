@@ -30,6 +30,7 @@ namespace trosecnik.src.InventorySpace
             if (Items.Count < INVENTORY_SIZE)
             {
                 Items.Add(item);
+                Items.Sort((a, b) => a.GetItemId().CompareTo(b.GetItemId()));
                 return false;
             }
             return true;

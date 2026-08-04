@@ -8,7 +8,7 @@ namespace trosecnik.src.WorldSpace.Entities
 
         private Vector2 Position;
         private bool Grown = false;
-        private double WaitTime = Rng.NextDouble() * 30.0 + 30.0; // 30 - 60 seconds
+        private double WaitTime = Rng.NextDouble() * 60.0 + 120.0; // 120 - 180 seconds (2 - 3 minutes)
 
         public Vector2 GetPosition(ulong tick)
         {

@@ -16,11 +16,11 @@ namespace trosecnik.src
         public const int BASE_TILE_SIZE = 16;
         public const int MINI_TILE_SIZE = 4;
         public const int DEFAULT_FONT_SIZE = 16;
-        public const int MAX_TIME = 18000; // 60 * 5 * 60 == 5 minutes
+        public const int MAX_TIME = 60 * 10 * 60; // 60 * 10 * 60 == 10 minutes
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
-        public const string VER_STRING = "0.2";
+        public const string VER_STRING = "0.3";
 
         public static int ScreenWidth = 640;
         public static int ScreenHeight = 360;
@@ -83,7 +83,7 @@ namespace trosecnik.src
             {
                 for (int y = 0; y < world.Height; y++)
                 {
-                    if (world.GetWalkable(x, y)) allowedSpawnPoints.Add(new Vector2(x, y));
+                    if (world.GetWalkable(x, y) && world.GetTileLayer1(x, y) is WorldSpace.Tiles.GrassTile) allowedSpawnPoints.Add(new Vector2(x, y));
                 }
             }
             Vector2 worldCenter = new(world.Width / 2, world.Height / 2);
@@ -197,6 +197,7 @@ namespace trosecnik.src
                     AddDebugMenuEntry($"FPS: {Raylib.GetFPS()}");
                     AddDebugMenuEntry($"Tick: {Tick}");
                     AddDebugMenuEntry($"Time: {Time}");
+                    AddDebugMenuEntry($"NightTint: {GetNightTintAlpha()}");
                     AddDebugMenuEntry($"Language: {TransalationServer.GetLanguage().ToUpper()}");
                     string mtString = miniTiles ? " [MT]" : "";
 
@@ -291,6 +292,12 @@ namespace trosecnik.src
                 }
             }
 
+            Raylib.DrawRectangle(
+                0, 0,
+                ScreenWidth, ScreenHeight,
+                new Color(0, 0, 0, (int) (GetNightTintAlpha() * 255))
+            );
+
             // HUD
 
             player.PlayerInventory.Draw();
@@ -298,18 +305,12 @@ namespace trosecnik.src
             hud.Health = (int) ((double) player.Health * (100 / Player.MAX_HEALTH));
             hud.Hunger = (int) ((double) player.Hunger * (100 / Player.MAX_HUNGER));
             hud.Draw();
-
-            Raylib.DrawRectangle(
-                0, 0,
-                ScreenWidth, ScreenHeight,
-                new Color(0, 0, 0, (int) (GetNightTintAlpha() * 255))
-            );
         }
 
         private static double GetNightTintAlpha()
         {
             const double MAX_TINT = 0.5;
-            return 1 - (0.5 * (Math.Sin(Time / MAX_TIME * Math.PI + Math.PI / 2) + 1) * (1 - MAX_TINT) + MAX_TINT);
+            return (Math.Sin((double) (Time * 2) / MAX_TIME * Math.PI - Math.PI / 2) / 2 + 0.5) * MAX_TINT;
         }
 
         public static void DrawCustomText(string text, float x, float y, float fontSize, Color color)
