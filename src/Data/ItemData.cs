@@ -42,6 +42,10 @@ namespace trosecnik.src.Data
             { "woodenWall", new ItemEntryData("items/item_0008.png", typeof(WoodenWallItem)) },
             { "hammer", new ItemEntryData("items/item_0009.png", typeof(HammerItem)) },
             { "berryBush", new ItemEntryData("items/item_0010.png", typeof(BerryBushItem)) },
+            { "bowl", new ItemEntryData("items/item_0011.png", typeof(BowlItem)) },
+            { "bowlWithDirtyWater", new ItemEntryData("items/item_0012.png", typeof(BowlWithDirtyWaterItem)) },
+            { "bowlWithWater", new ItemEntryData("items/item_0013.png", typeof(BowlWithWaterItem)) },
+            { "campfire", new ItemEntryData("items/item_0014.png", typeof(CampfireItem)) },
         };
         
         public static string GetTexture(string id)

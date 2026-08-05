@@ -33,6 +33,14 @@ namespace trosecnik.src.Data
                 [new("woodenLog", 8)],
                 new("hammer", 1)
             ),
+            new(
+                [new("woodenLog", 6)],
+                new("bowl", 1)
+            ),
+            new(
+                [new("woodenLog", 8)],
+                new("campfire", 1)
+            ),
         ];
     }
 }

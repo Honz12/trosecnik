@@ -253,7 +253,7 @@ namespace trosecnik.src.WorldSpace
                         continue;
                     }
 
-                    var bushEntity = new Entities.RedBerryBush();
+                    var bushEntity = new Entities.RedBerryBushEntity();
 
                     bushEntity.SetPos(coords);
                     bushEntity.Bush_Grow();

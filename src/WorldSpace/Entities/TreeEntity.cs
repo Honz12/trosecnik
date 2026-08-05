@@ -78,16 +78,16 @@ namespace trosecnik.src.WorldSpace.Entities
             {
                 Program.DropItem(
                     new (
-                        (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                        (int) (Position.Y + (Rng.Next(2) * 2 - 1))
-                    ), 
+                        Program.player.X,
+                        Program.player.Y
+                    ),
                     new WoodenLogItem()
                 );
 
                 Program.DropItem(
                     new (
-                        (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                        (int) (Position.Y + (Rng.Next(2) * 2 - 1))
+                        Program.player.X,
+                        Program.player.Y
                     ),
                     new TreeSaplingItem()
                 );
@@ -98,8 +98,8 @@ namespace trosecnik.src.WorldSpace.Entities
                 {
                     Program.DropItem(
                         new (
-                            (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                            (int) (Position.Y + (Rng.Next(2) * 2 - 1))
+                            Program.player.X,
+                            Program.player.Y
                         ),
                         new TreeSaplingItem()
                     );
@@ -108,9 +108,9 @@ namespace trosecnik.src.WorldSpace.Entities
                 {
                     Program.DropItem(
                         new (
-                            (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                            (int) (Position.Y + (Rng.Next(2) * 2 - 1))
-                        ), 
+                            Program.player.X,
+                            Program.player.Y
+                        ),
                         new WoodenLogItem()
                     );
                 }

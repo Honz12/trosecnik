@@ -36,6 +36,17 @@ namespace trosecnik.src
 
             { "item-berryBush", "Bobulový keř" },
                 { "itemIntDesc-berryBush", "Zasadit kliknutím" },
+
+            { "item-bowl", "Miska" },
+                { "itemIntDesc-bowl", "Nabrat vodu kliknutím" },
+
+            { "item-bowlWithDirtyWater", "Miska se špinavou vodu" },
+
+            { "item-bowlWithWater", "Miska s vodou" },
+                { "itemIntDesc-bowlWithWater", "Vypít kliknutím" },
+
+            { "item-campfire", "Táborák" },
+                { "itemIntDesc-campfire", "Postavit klinkutím" },
         };
         private static readonly Dictionary<string, string> EngLanguage = new()
         {
@@ -71,6 +82,17 @@ namespace trosecnik.src
 
             { "item-berryBush", "Berry Bush" },
                 { "itemIntDesc-berryBush", "Click to plant" },
+
+            { "item-bowl", "Bowl" },
+                { "itemIntDesc-bowl", "Click to collect water" },
+
+            { "item-bowlWithDirtyWater", "Bowl with Dirty Water" },
+
+            { "item-bowlWithWater", "Bowl with Water" },
+                { "itemIntDesc-bowlWithWater", "Click to drink" },
+
+            { "item-campfire", "Campfire" },
+                { "itemIntDesc-campfire", "Click to build" },
         };
 
         private static string Language = "cz";

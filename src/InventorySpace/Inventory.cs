@@ -11,8 +11,9 @@ namespace trosecnik.src.InventorySpace
         public const int ITEM_SIZE_PX = 16;
         private const int SLOTS_PER_ROW = 5;
         private const int SLOT_SIZE_PX = 22;
+        private const bool OLD_RENDERING = false;
 
-        private int Selected = 0;
+        public int Selected = 0;
 
         private List<IItem> Items = new();
         
@@ -34,6 +35,10 @@ namespace trosecnik.src.InventorySpace
                 if (lastIndex >= 0)
                 {
                     Items.Insert(lastIndex + 1, item);
+                    if (lastIndex + 1 <= Selected)
+                    {
+                        Selected++;
+                    }
                 }
                 else
                 {
@@ -49,122 +54,158 @@ namespace trosecnik.src.InventorySpace
             Items.RemoveAt(idx);
         }
 
-        public void Draw()
+        private void DrawCounterFontWithOutline(int num, int x, int y)
         {
-            Texture2D slot = TextureManager.GetTexture("ui/inv_slot_0001.png");
-            Texture2D slotSelected = TextureManager.GetTexture("ui/inv_slot_0002.png");
-
-            int menuWidth = SLOTS_PER_ROW * SLOT_SIZE_PX * Program.GameGraphicsScale;
-            int menuHeight = INVENTORY_SIZE / SLOTS_PER_ROW * SLOT_SIZE_PX * Program.GameGraphicsScale;
-
-            int menuOriginX = 8 * Program.GameGraphicsScale;
-            int menuOriginY = Program.ScreenHeight - 8 * Program.GameGraphicsScale - menuHeight;
-
-            Raylib.DrawRectangleLinesEx(
-                new(
-                    menuOriginX - Program.GameGraphicsScale, menuOriginY - Program.GameGraphicsScale,
-                    menuWidth + Program.GameGraphicsScale * 2, menuHeight + Program.GameGraphicsScale * 2
-                ),
-                Program.GameGraphicsScale,
-                Color.Black
-            );
-
-            for (int i = 0; i < INVENTORY_SIZE; i++)
+            float fontSize = Program.GameGraphicsScale * 5;
+            string text = $"{num}";
+            
+            for (int ox = -1; ox <= 1; ox++)
             {
-                IItem? item = null;
-                if (i < Items.Count)
+                for (int oy = -1; oy <= 1; oy++)
                 {
-                    item = Items[i];
-                }
+                    if (ox == 0 && oy == 0) continue;
 
-                int x = i % SLOTS_PER_ROW;
-                int y = i / SLOTS_PER_ROW;
-
-                if (i == Selected)
-                {
-                    Raylib.DrawTexturePro(
-                        slotSelected,
+                    Raylib.DrawTextEx(
+                        Program.counterFont,
+                        text,
                         new(
-                            0, 0,
-                            SLOT_SIZE_PX, SLOT_SIZE_PX
+                            x + ox * Program.GameGraphicsScale,
+                            y + oy * Program.GameGraphicsScale
                         ),
-                        new(
-                            x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX, y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY,
-                            SLOT_SIZE_PX * Program.GameGraphicsScale, SLOT_SIZE_PX * Program.GameGraphicsScale
-                        ),
-                        Vector2.Zero,
-                        0.0f,
-                        Color.White
-                    );
-                }
-                else
-                {
-                    Raylib.DrawTexturePro(
-                        slot,
-                        new(
-                            0, 0,
-                            SLOT_SIZE_PX, SLOT_SIZE_PX
-                        ),
-                        new(
-                            x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX, y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY,
-                            SLOT_SIZE_PX * Program.GameGraphicsScale, SLOT_SIZE_PX * Program.GameGraphicsScale
-                        ),
-                        Vector2.Zero,
-                        0.0f,
-                        Color.White
-                    );
-                }
-
-                if (item != null)
-                {
-                    Texture2D itemTexture = TextureManager.GetTexture(ItemData.GetTexture(item.GetItemId()));
-
-                    Raylib.DrawTexturePro(
-                        itemTexture,
-                        new(
-                            0, 0,
-                            ITEM_SIZE_PX, ITEM_SIZE_PX
-                        ),
-                        new(
-                            x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale,
-                            y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale,
-                            ITEM_SIZE_PX * Program.GameGraphicsScale,
-                            ITEM_SIZE_PX * Program.GameGraphicsScale
-                        ),
-                        Vector2.Zero,
-                        0.0f,
-                        Color.White
-                    );
-                }
-            }
-
-            if (Selected < Items.Count)
-            {
-                IItem item = Items[Selected];
-
-                string itemId = item.GetItemId();
-                string displayName = TransalationServer.GetTransalated($"item-{itemId}");
-                string intDesc = TransalationServer.GetTransalated($"itemIntDesc-{itemId}");
-                
-                int fontSize = Program.DEFAULT_FONT_SIZE * Program.GameGraphicsScale;
-                Program.DrawCustomText(
-                    displayName,
-                    menuOriginX, menuOriginY - fontSize - Program.GameGraphicsScale,
-                    fontSize,
-                    Color.Black
-                );
-
-                if (item.GetItemType() != IItem.ItemType.NoInteraction)
-                {
-                    Program.DrawCustomText(
-                        intDesc,
-                        Program.ScreenCenterX - Raylib.MeasureTextEx(Program.font, intDesc, fontSize, Program.fontSpacing).X / 2,
-                        Program.ScreenHeight - (8 + SLOT_SIZE_PX) * Program.GameGraphicsScale - fontSize - Program.GameGraphicsScale,
-                        fontSize,
+                        fontSize, 
+                        Program.counterFontSpacing,
                         Color.Black
                     );
                 }
             }
+
+            Raylib.DrawTextEx(
+                Program.counterFont,
+                text,
+                new(x, y),
+                fontSize, 
+                Program.counterFontSpacing,
+                Color.White
+            );
+        }
+
+        public void Draw()
+        {
+            Texture2D slot = TextureManager.GetTexture("ui/inv_slot_0001.png");
+            Texture2D slotSelected = TextureManager.GetTexture("ui/inv_slot_0002.png");
+            /*{
+                int menuWidth = SLOTS_PER_ROW * SLOT_SIZE_PX * Program.GameGraphicsScale;
+                int menuHeight = INVENTORY_SIZE / SLOTS_PER_ROW * SLOT_SIZE_PX * Program.GameGraphicsScale;
+
+                int menuOriginX = 8 * Program.GameGraphicsScale;
+                int menuOriginY = Program.ScreenHeight - 8 * Program.GameGraphicsScale - menuHeight;
+
+                Raylib.DrawRectangleLinesEx(
+                    new(
+                        menuOriginX - Program.GameGraphicsScale, menuOriginY - Program.GameGraphicsScale,
+                        menuWidth + Program.GameGraphicsScale * 2, menuHeight + Program.GameGraphicsScale * 2
+                    ),
+                    Program.GameGraphicsScale,
+                    Color.Black
+                );
+
+                for (int i = 0; i < INVENTORY_SIZE; i++)
+                {
+                    IItem? item = null;
+                    if (i < Items.Count)
+                    {
+                        item = Items[i];
+                    }
+
+                    int x = i % SLOTS_PER_ROW;
+                    int y = i / SLOTS_PER_ROW;
+
+                    if (i == Selected)
+                    {
+                        Raylib.DrawTexturePro(
+                            slotSelected,
+                            new(
+                                0, 0,
+                                SLOT_SIZE_PX, SLOT_SIZE_PX
+                            ),
+                            new(
+                                x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX, y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY,
+                                SLOT_SIZE_PX * Program.GameGraphicsScale, SLOT_SIZE_PX * Program.GameGraphicsScale
+                            ),
+                            Vector2.Zero,
+                            0.0f,
+                            Color.White
+                        );
+                    }
+                    else
+                    {
+                        Raylib.DrawTexturePro(
+                            slot,
+                            new(
+                                0, 0,
+                                SLOT_SIZE_PX, SLOT_SIZE_PX
+                            ),
+                            new(
+                                x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX, y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY,
+                                SLOT_SIZE_PX * Program.GameGraphicsScale, SLOT_SIZE_PX * Program.GameGraphicsScale
+                            ),
+                            Vector2.Zero,
+                            0.0f,
+                            Color.White
+                        );
+                    }
+
+                    if (item != null)
+                    {
+                        Texture2D itemTexture = TextureManager.GetTexture(ItemData.GetTexture(item.GetItemId()));
+
+                        Raylib.DrawTexturePro(
+                            itemTexture,
+                            new(
+                                0, 0,
+                                ITEM_SIZE_PX, ITEM_SIZE_PX
+                            ),
+                            new(
+                                x * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginX + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale,
+                                y * SLOT_SIZE_PX * Program.GameGraphicsScale + menuOriginY + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale,
+                                ITEM_SIZE_PX * Program.GameGraphicsScale,
+                                ITEM_SIZE_PX * Program.GameGraphicsScale
+                            ),
+                            Vector2.Zero,
+                            0.0f,
+                            Color.White
+                        );
+                    }
+                }
+
+                if (Selected < Items.Count)
+                {
+                    IItem item = Items[Selected];
+
+                    string itemId = item.GetItemId();
+                    string displayName = TransalationServer.GetTransalated($"item-{itemId}");
+                    string intDesc = TransalationServer.GetTransalated($"itemIntDesc-{itemId}");
+                    
+                    int fontSize = Program.DEFAULT_FONT_SIZE * Program.GameGraphicsScale;
+                    Program.DrawCustomText(
+                        displayName,
+                        menuOriginX, menuOriginY - fontSize - Program.GameGraphicsScale,
+                        fontSize,
+                        Color.Black
+                    );
+
+                    if (item.GetItemType() != IItem.ItemType.NoInteraction)
+                    {
+                        Program.DrawCustomText(
+                            intDesc,
+                            Program.ScreenCenterX - Raylib.MeasureTextEx(Program.font, intDesc, fontSize, Program.fontSpacing).X / 2,
+                            Program.ScreenHeight - (8 + SLOT_SIZE_PX) * Program.GameGraphicsScale - fontSize - Program.GameGraphicsScale,
+                            fontSize,
+                            Color.Black
+                        );
+                    }
+                }
+            }*/
 
             Dictionary<string, int> itemCounts = [];
             List<string> itemIds = [];
@@ -174,7 +215,7 @@ namespace trosecnik.src.InventorySpace
             {
                 if (i == Items.Count)
                 {
-                    itemSelectedIndexes.Add(i);
+                    if (Items.Count < INVENTORY_SIZE) itemSelectedIndexes.Add(i);
                     continue;
                 }
                 IItem item = Items[i];
@@ -191,11 +232,19 @@ namespace trosecnik.src.InventorySpace
                 }
             }
 
-            int hotbarWidth = (itemCounts.Count + 1) * SLOT_SIZE_PX * Program.GameGraphicsScale;
+            int hotbarWidth = (itemCounts.Count + (Items.Count < INVENTORY_SIZE ? 1 : 0)) * SLOT_SIZE_PX * Program.GameGraphicsScale;
             int hotbarHeight = SLOT_SIZE_PX * Program.GameGraphicsScale;
 
             int hotbarOriginX = Program.ScreenCenterX - hotbarWidth / 2;
             int hotbarOriginY = Program.ScreenHeight - hotbarHeight;
+
+            Program.DrawCustomText(
+                $"{Items.Count}/{INVENTORY_SIZE}",
+                hotbarOriginX + hotbarWidth + 8 * Program.GameGraphicsScale,
+                hotbarOriginY + 3 * Program.GameGraphicsScale,
+                Program.DEFAULT_FONT_SIZE * Program.GameGraphicsScale,
+                Color.Black
+            );
 
             Raylib.DrawRectangleLinesEx(
                 new(
@@ -208,7 +257,7 @@ namespace trosecnik.src.InventorySpace
                 Color.Black
             );
 
-            for (int i = 0; i <= itemCounts.Count; i++)
+            for (int i = 0; i < itemSelectedIndexes.Count; i++)
             {
                 Raylib.DrawTexturePro(
                     Selected == itemSelectedIndexes[i] ? slotSelected : slot,
@@ -225,7 +274,7 @@ namespace trosecnik.src.InventorySpace
                     Color.White
                 );
 
-                if (i < itemCounts.Count)
+                if (i < itemIds.Count)
                 {
                     string id = itemIds[i];
 
@@ -243,6 +292,15 @@ namespace trosecnik.src.InventorySpace
                         0.0f,
                         Color.White
                     );
+
+                    if (itemCounts[id] != 1)
+                    {
+                        DrawCounterFontWithOutline(
+                            itemCounts[id],
+                            hotbarOriginX + (i * SLOT_SIZE_PX + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2) * Program.GameGraphicsScale,
+                            hotbarOriginY + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale
+                        );
+                    }
                 }
             }
         }

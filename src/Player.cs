@@ -144,6 +144,11 @@ namespace trosecnik.src
                 Water--;
             }
 
+            if (Water == 0 || Food == 0)
+            {
+                Health = 0;
+            }
+
             PlayerInventory.Update(this, mousePosition);
 
             if (Food > 95 && tick % 600 == 0)

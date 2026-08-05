@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace trosecnik.src.WorldSpace.Entities
 {
-    public class RedBerryBush : IEntity
+    public class RedBerryBushEntity : IEntity
     {
         private Vector2 Position;
         private static readonly Random Rng = new();
@@ -43,9 +43,7 @@ namespace trosecnik.src.WorldSpace.Entities
         public void SetPos(Vector2 position)
         {
             Position = position;
-            SoundManager.Play("player/pickupItem/pickupItem1.wav");
-            // assets/audio/player/dropItem/dropItem1.wav
-            // assets\audio\player\dropItem\dropItem1.wav
+            SoundManager.Play("player/dropItem/dropItem1.wav");
             Program.world.interactableEntities.Add(position, this);
         }
 
@@ -68,8 +66,8 @@ namespace trosecnik.src.WorldSpace.Entities
                 SoundManager.Play("player/dropItem/dropItem1.wav");
                 Program.DropItem(
                     new (
-                        (int) (Position.X + (Rng.Next(2) * 2 - 1)),
-                        (int) (Position.Y + (Rng.Next(2) * 2 - 1))
+                        Program.player.X,
+                        Program.player.Y
                     ), 
                     new InventorySpace.Items.RedBerriesItem()
                 );

@@ -1,4 +1,3 @@
-using System.Net.Security;
 using System.Numerics;
 using trosecnik.src.WorldSpace;
 using trosecnik.src.WorldSpace.Entities;
@@ -28,11 +27,13 @@ namespace trosecnik.src.InventorySpace.Items
             {
                 var tree = entity as TreeEntity;
                 var sapling = entity as TreeSaplingEntity;
-                var berryBush = entity as RedBerryBush;
+                var berryBush = entity as RedBerryBushEntity;
+                var campfire = entity as CampfireEntity;
 
                 tree?.Tree_Hit();
                 sapling?.Sapling_Break();
                 berryBush?.Bush_Break();
+                campfire?.Campfire_Destroy();
             }
         }
     }

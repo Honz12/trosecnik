@@ -22,7 +22,7 @@ namespace trosecnik.src
 
         public static string RepeatString(string s, int count) => string.Concat(Enumerable.Repeat(s, Math.Max(0, count)));
 
-        public const string VER_STRING = "0.4"; 
+        public const string VER_STRING = "0.5"; 
 
         public static int ScreenWidth = 640;
         public static int ScreenHeight = 360;

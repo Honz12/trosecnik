@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace trosecnik.src.WorldSpace.Entities
 {
-    public abstract class SimpleAnimalBase : IEntity
+    public abstract class SimpleAnimalBaseEntity : IEntity
     {
         protected Vector2 Position;
         protected int Health;
