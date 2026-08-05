@@ -191,11 +191,22 @@ namespace trosecnik.src.InventorySpace
                 }
             }
 
-            int hotbarWidth = itemCounts.Count * SLOT_SIZE_PX * Program.GameGraphicsScale;
+            int hotbarWidth = (itemCounts.Count + 1) * SLOT_SIZE_PX * Program.GameGraphicsScale;
             int hotbarHeight = SLOT_SIZE_PX * Program.GameGraphicsScale;
 
-            int hotbarOriginX = Program.ScreenCenterX - (hotbarWidth + SLOT_SIZE_PX * Program.GameGraphicsScale) / 2;
+            int hotbarOriginX = Program.ScreenCenterX - hotbarWidth / 2;
             int hotbarOriginY = Program.ScreenHeight - hotbarHeight;
+
+            Raylib.DrawRectangleLinesEx(
+                new(
+                    hotbarOriginX - 1 * Program.GameGraphicsScale,
+                    hotbarOriginY - 1 * Program.GameGraphicsScale,
+                    hotbarWidth + 2 * Program.GameGraphicsScale,
+                    hotbarHeight + 2 * Program.GameGraphicsScale
+                ),
+                Program.GameGraphicsScale,
+                Color.Black
+            );
 
             for (int i = 0; i <= itemCounts.Count; i++)
             {
