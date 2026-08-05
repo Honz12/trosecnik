@@ -31,6 +31,13 @@ namespace trosecnik.src
                 string filePath = $"assets/audio/{path}";
 
                 Sound newSound = Raylib.LoadSound(filePath);
+
+                if (!Raylib.IsSoundValid(newSound))
+                {
+                    Console.Write("\a");
+                    return;
+                }
+
                 _cache[path] = newSound;
 
                 Raylib.PlaySound(newSound);
@@ -40,6 +47,13 @@ namespace trosecnik.src
                 string filePath = $"assets/audio/{path}";
 
                 Sound newSound = Raylib.LoadSound(filePath);
+
+                if (!Raylib.IsSoundValid(newSound))
+                {
+                    Console.Write("\a");
+                    return;
+                }
+
                 Raylib.PlaySound(newSound);
 
                 _playingUncached.Add(newSound);

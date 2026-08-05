@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Raylib_cs;
 using trosecnik.src.Data;
 using trosecnik.src.InventorySpace;
@@ -47,7 +48,62 @@ namespace trosecnik.src
         public static AppMode appMode = AppMode.Playing;
 
         public static Font font;
+        public static Font counterFont;
         public static float fontSpacing = 0;
+        public static float counterFontSpacing = 0;
+
+        public static unsafe Font LoadCustom3x5Font(string imagePath)
+        {
+            // 1. Load the texture
+            Texture2D texture = Raylib.LoadTexture(imagePath);
+            Raylib.SetTextureFilter(texture, TextureFilter.Point);
+
+            int charWidth = 3;
+            int charHeight = 5;
+            int glyphCount = 10; // '0' through '9'
+
+            // 2. Allocate unmanaged memory for the arrays
+            // We use Marshal.AllocHGlobal to allocate memory outside the garbage collector's reach
+            Rectangle* recs = (Rectangle*)Marshal.AllocHGlobal(glyphCount * sizeof(Rectangle));
+            GlyphInfo* glyphs = (GlyphInfo*)Marshal.AllocHGlobal(glyphCount * sizeof(GlyphInfo));
+
+            for (int i = 0; i < glyphCount; i++)
+            {
+                // Crop rectangle for character '0' + i in the sprite sheet (horizontal strip layout)
+                recs[i] = new Rectangle(i * charWidth, 0, charWidth, charHeight);
+
+                glyphs[i] = new GlyphInfo
+                {
+                    Value = 48 + i,        // ASCII codepoint ('0' = 48, '1' = 49...)
+                    OffsetX = 0,
+                    OffsetY = 0,
+                    AdvanceX = charWidth + 1 // Width + spacing
+                };
+            }
+
+            // 3. Assemble the Font struct
+            Font font = new Font
+            {
+                BaseSize = charHeight,
+                GlyphCount = glyphCount,
+                GlyphPadding = 0,
+                Texture = texture,
+                Recs = recs,
+                Glyphs = glyphs
+            };
+
+            return font;
+        }
+
+        public static unsafe void UnloadCustomFont(Font font)
+        {
+            // Unload the texture natively
+            Raylib.UnloadTexture(font.Texture);
+            
+            // Free the unmanaged memory we allocated
+            if (font.Recs != null) Marshal.FreeHGlobal((IntPtr)font.Recs);
+            if (font.Glyphs != null) Marshal.FreeHGlobal((IntPtr)font.Glyphs);
+        }
 
         public static void AddDebugMenuEntry(string entry)
         {
@@ -127,6 +183,7 @@ namespace trosecnik.src
 
             // Raylib-cs accepts the array directly
             font = Raylib.LoadFontEx("assets/PXPLUS_IBM_VGA8.TTF", 32, codepoints, codepoints.Length);
+            counterFont = LoadCustom3x5Font("assets/counterFont.png");
 
             while (!Raylib.WindowShouldClose() && !ShouldExit)
             {
@@ -237,6 +294,8 @@ namespace trosecnik.src
                 Tick++;
             }
 
+            Raylib.UnloadFont(font);
+            UnloadCustomFont(counterFont);
             TextureManager.UnloadAll();
             SoundManager.UnloadAll();
             Raylib.CloseAudioDevice();

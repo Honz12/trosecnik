@@ -159,9 +159,78 @@ namespace trosecnik.src.InventorySpace
                     Program.DrawCustomText(
                         intDesc,
                         Program.ScreenCenterX - Raylib.MeasureTextEx(Program.font, intDesc, fontSize, Program.fontSpacing).X / 2,
-                        Program.ScreenHeight - 8 * Program.GameGraphicsScale - fontSize - Program.GameGraphicsScale,
+                        Program.ScreenHeight - (8 + SLOT_SIZE_PX) * Program.GameGraphicsScale - fontSize - Program.GameGraphicsScale,
                         fontSize,
                         Color.Black
+                    );
+                }
+            }
+
+            Dictionary<string, int> itemCounts = [];
+            List<string> itemIds = [];
+            List<int> itemSelectedIndexes = [];
+
+            for (int i = 0; i <= Items.Count; i++)
+            {
+                if (i == Items.Count)
+                {
+                    itemSelectedIndexes.Add(i);
+                    continue;
+                }
+                IItem item = Items[i];
+                string itemId = item.GetItemId();
+                if (itemCounts.ContainsKey(itemId))
+                {
+                    itemCounts[itemId]++;
+                }
+                else
+                {
+                    itemCounts[itemId] = 1;
+                    itemIds.Add(itemId);
+                    itemSelectedIndexes.Add(i);
+                }
+            }
+
+            int hotbarWidth = itemCounts.Count * SLOT_SIZE_PX * Program.GameGraphicsScale;
+            int hotbarHeight = SLOT_SIZE_PX * Program.GameGraphicsScale;
+
+            int hotbarOriginX = Program.ScreenCenterX - (hotbarWidth + SLOT_SIZE_PX * Program.GameGraphicsScale) / 2;
+            int hotbarOriginY = Program.ScreenHeight - hotbarHeight;
+
+            for (int i = 0; i <= itemCounts.Count; i++)
+            {
+                Raylib.DrawTexturePro(
+                    Selected == itemSelectedIndexes[i] ? slotSelected : slot,
+                    new(
+                        0, 0,
+                        SLOT_SIZE_PX, SLOT_SIZE_PX
+                    ),
+                    new(
+                        hotbarOriginX + i * SLOT_SIZE_PX * Program.GameGraphicsScale, hotbarOriginY,
+                        SLOT_SIZE_PX * Program.GameGraphicsScale, SLOT_SIZE_PX * Program.GameGraphicsScale
+                    ),
+                    Vector2.Zero,
+                    0.0f,
+                    Color.White
+                );
+
+                if (i < itemCounts.Count)
+                {
+                    string id = itemIds[i];
+
+                    Raylib.DrawTexturePro(
+                        TextureManager.GetTexture(ItemData.GetTexture(id)),
+                        new(
+                            0, 0,
+                            ITEM_SIZE_PX, ITEM_SIZE_PX
+                        ),
+                        new(
+                            hotbarOriginX + (i * SLOT_SIZE_PX + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2) * Program.GameGraphicsScale, hotbarOriginY + (SLOT_SIZE_PX - ITEM_SIZE_PX) / 2 * Program.GameGraphicsScale,
+                            ITEM_SIZE_PX * Program.GameGraphicsScale, ITEM_SIZE_PX * Program.GameGraphicsScale
+                        ),
+                        Vector2.Zero,
+                        0.0f,
+                        Color.White
                     );
                 }
             }
@@ -171,13 +240,57 @@ namespace trosecnik.src.InventorySpace
         {
             float scroll = Raylib.GetMouseWheelMove();
 
-            if (scroll > 0)
+            if (scroll != 0)
             {
-                Selected--;
-            }
-            else if (scroll < 0)
-            {
-                Selected++;
+                var groupStarts = new List<int>();
+                string? lastId = null;
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    string itemId = Items[i].GetItemId();
+                    if (i == 0 || itemId != lastId)
+                    {
+                        groupStarts.Add(i);
+                        lastId = itemId;
+                    }
+                }
+
+                if (Items.Count < INVENTORY_SIZE)
+                {
+                    groupStarts.Add(Items.Count);
+                }
+
+                int current = Selected;
+                if (current >= Items.Count && Items.Count == INVENTORY_SIZE)
+                {
+                    current = groupStarts[0];
+                }
+
+                int groupIndex = 0;
+                for (int i = 0; i < groupStarts.Count; i++)
+                {
+                    if (groupStarts[i] <= current)
+                    {
+                        groupIndex = i;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (scroll > 0)
+                {
+                    groupIndex--;
+                }
+                else if (scroll < 0)
+                {
+                    groupIndex++;
+                }
+
+                groupIndex %= groupStarts.Count;
+                if (groupIndex < 0) groupIndex += groupStarts.Count;
+
+                Selected = groupStarts[groupIndex];
             }
 
             Selected += INVENTORY_SIZE;

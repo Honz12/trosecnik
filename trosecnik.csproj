@@ -17,4 +17,6 @@
     </None>
   </ItemGroup>
 
+  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
 </Project>

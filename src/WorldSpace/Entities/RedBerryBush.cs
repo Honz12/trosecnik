@@ -43,7 +43,7 @@ namespace trosecnik.src.WorldSpace.Entities
         public void SetPos(Vector2 position)
         {
             Position = position;
-            SoundManager.Play("player/dropItem/dropItem1.wav");
+            SoundManager.Play("player/pickupItem/pickupItem1.wav");
             // assets/audio/player/dropItem/dropItem1.wav
             // assets\audio\player\dropItem\dropItem1.wav
             Program.world.interactableEntities.Add(position, this);
@@ -65,6 +65,7 @@ namespace trosecnik.src.WorldSpace.Entities
         {
             if (Grown)
             {
+                SoundManager.Play("player/dropItem/dropItem1.wav");
                 Program.DropItem(
                     new (
                         (int) (Position.X + (Rng.Next(2) * 2 - 1)),
@@ -89,6 +90,7 @@ namespace trosecnik.src.WorldSpace.Entities
                 Interact();
                 return;
             }
+            SoundManager.Play("player/dropItem/dropItem1.wav");
             Program.DropItem(
                 Position,
                 new InventorySpace.Items.BerryBushItem()
